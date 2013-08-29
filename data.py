@@ -1,7 +1,7 @@
 '''
 Created on 2013-06-17
 
-@author: Ian
+@author: Ian Hung
 '''
 from _content.models import StructureNode, Rating, ViewCount, Paragraph, Image, Timelike
 import random
