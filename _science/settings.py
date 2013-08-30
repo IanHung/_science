@@ -196,7 +196,9 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     
 )
 if not DEBUG:
+    AWS_ACCESS_KEY_ID = "AKIAI5JA3A4QESHMC2EQ"
+    AWS_SECRET_ACCESS_KEY = "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"
     AWS_STORAGE_BUCKET_NAME ='underscore-science'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.s3BotoStorage'
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     s3_URL = 'http://%s.s3.amazonaws.com/' %AWS_STORAGE_BUCKET_NAME
     STATIC_URL = s3_URL
