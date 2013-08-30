@@ -25,6 +25,20 @@ DATABASES = {
     }
 }
 
+import os 
+ 
+if 'RDS_HOSTNAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ['underscorescience1'],
+            'USER': os.environ['IanHung'],
+            'PASSWORD': os.environ['Curly123'],
+            'HOST': os.environ['underscore-science-1.caqiqxsffhyl.us-east-1.rds.amazonaws.com'],
+            'PORT': os.environ['3306'],
+        }
+    }
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
