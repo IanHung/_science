@@ -27,7 +27,7 @@ DATABASES = {
 
 import os 
  
-if 'underscore-science-1' in os.environ:
+if 'underscorescience1' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
