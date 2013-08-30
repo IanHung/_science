@@ -202,5 +202,7 @@ if not DEBUG:
     AWS_SECRET_ACCESS_KEY = "wuFO2TokWO125NYRRoJ8iBqHKiLByLnA0d3he2Zj"
     AWS_STORAGE_BUCKET_NAME ='underscore-science'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    DEFAULT_FILE_STORAGE    = 'storages.backends.s3boto.S3BotoStorage'
     s3_URL = 'http://%s.s3.amazonaws.com/' %AWS_STORAGE_BUCKET_NAME
     STATIC_URL = s3_URL
+    MEDIA_URL = s3_URL
