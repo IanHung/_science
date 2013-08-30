@@ -196,7 +196,7 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     
 )
 if not DEBUG:
-    AWS_STORAGE_BUCKET_NAME = os.environ['underscore-science']
+    AWS_STORAGE_BUCKET_NAME ='underscore-science'
     STATICFILES_STORAGE = 'storages.backends.s3boto.s3BotoStorage'
     s3_URL = 'http://%s.s3.amazonaws.com/' %AWS_STORAGE_BUCKET_NAME
     STATIC_URL = s3_URL
