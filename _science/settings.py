@@ -27,15 +27,15 @@ DATABASES = {
 
 import os 
  
-if 'underscorescience1' in os.environ:
+if not DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ['underscorescience1'],
-            'USER': os.environ['IanHung'],
-            'PASSWORD': os.environ['Curly123'],
-            'HOST': os.environ['underscore-science-1.caqiqxsffhyl.us-east-1.rds.amazonaws.com'],
-            'PORT': os.environ['3306'],
+            'NAME': 'underscorescience1',
+            'USER': 'IanHung',
+            'PASSWORD': 'Curly123',
+            'HOST': 'underscore-science-1.caqiqxsffhyl.us-east-1.rds.amazonaws.com',
+            'PORT': '3306',
         }
     }
 
