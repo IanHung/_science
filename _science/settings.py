@@ -192,3 +192,9 @@ LOGGING = {
 TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     "django.core.context_processors.request",
 )
+
+if not DEBUG:
+    AWS_STORAGE_BUCKET_NAME = os.environ['underscore-science']
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+    STATIC_URL = S3_URL
