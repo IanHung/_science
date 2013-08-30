@@ -27,7 +27,7 @@ DATABASES = {
 
 import os 
  
-if 'RDS_HOSTNAME' in os.environ:
+if 'underscore-science-1' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
