@@ -4,7 +4,7 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
 # Django settings for _science project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -194,7 +194,7 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
 )
 
 if not DEBUG:
-    AWS_STORAGE_BUCKET_NAME = os.environ['underscore-science']
+    AWS_STORAGE_BUCKET_NAME = 'underscore-science'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
     STATIC_URL = S3_URL
