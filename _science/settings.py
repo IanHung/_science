@@ -4,7 +4,7 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
 # Django settings for _science project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -139,6 +139,7 @@ INSTALLED_APPS = (
      '_article',
      '_commentGarden',
      '_user',
+     'storages',
      
 )
 #Setting up user registration.
@@ -191,4 +192,11 @@ LOGGING = {
 
 TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     "django.core.context_processors.request",
+    "django.core.context_processors.static",
+    
 )
+if not DEBUG:
+    AWS_STORAGE_BUCKET_NAME = os.environ['underscore-science']
+    STATICFILES_STORAGE = 'storages.backends.s3boto.s3BotoStorage'
+    s3_URL = 'http://%s.s3.amazonaws.com/' %AWS_STORAGE_BUCKET_NAME
+    STATIC_URL = s3_URL
