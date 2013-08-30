@@ -57,6 +57,8 @@ USE_TZ = True
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media').replace('\\','/')
+if not DEBUG:
+    MEDIA_ROOT = '/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -67,8 +69,10 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
 
+STATIC_ROOT = ''
+if not DEBUG:
+    STATIC_ROOT = '/static/'
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
@@ -197,12 +201,15 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     "django.core.context_processors.static",
     
 )
+
+
 if not DEBUG:
     AWS_ACCESS_KEY_ID = "AKIAI5JA3A4QESHMC2EQ"
     AWS_SECRET_ACCESS_KEY = "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"
     AWS_STORAGE_BUCKET_NAME ='underscore-science'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE    = 'storages.backends.s3boto.S3BotoStorage'
+    DEFAULT_FILE_STORAGE = '_science.s3utils.MediaRootS3BotoStorage'
+    STATICFILES_STORAGE = '_science.s3utils.StaticRootS3BotoStorage'
     s3_URL = 'http://%s.s3.amazonaws.com/' %AWS_STORAGE_BUCKET_NAME
-    STATIC_URL = s3_URL
-    MEDIA_URL = s3_URL
+    STATIC_URL = s3_URL + STATIC_ROOT
+    MEDIA_URL = s3_URL + MEDIA_ROOT
+    AWS_QUERYSTRING_AUTH =False
