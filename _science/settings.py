@@ -4,7 +4,7 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
 # Django settings for _science project.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -27,23 +27,12 @@ DATABASES = {
 
 import os 
  
-if not DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'underscorescience1',
-            'USER': 'IanHung',
-            'PASSWORD': 'Curly123',
-            'HOST': 'underscore-science-1.caqiqxsffhyl.us-east-1.rds.amazonaws.com',
-            'PORT': '3306',
-        }
-    }
+
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
-if not DEBUG:
-    ALLOWED_HOSTS = ["*"]
+
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -71,8 +60,7 @@ USE_TZ = True
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media').replace('\\','/')
-if not DEBUG:
-    MEDIA_ROOT = '/media/'
+
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -85,8 +73,7 @@ MEDIA_URL = '/media/'
 # Example: "/var/www/example.com/static/"
 
 STATIC_ROOT = ''
-if not DEBUG:
-    STATIC_ROOT = '/static/'
+
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
@@ -218,12 +205,4 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
 
 
 if not DEBUG:
-    AWS_ACCESS_KEY_ID = "AKIAI5JA3A4QESHMC2EQ"
-    AWS_SECRET_ACCESS_KEY = "wuFO2TokWO125NYRRoJ8iBqHKiLByLnA0d3he2Zj"
-    AWS_STORAGE_BUCKET_NAME ='underscore-science'
-    DEFAULT_FILE_STORAGE = '_science.s3utils.MediaRootS3BotoStorage'
-    STATICFILES_STORAGE = '_science.s3utils.StaticRootS3BotoStorage'
-    s3_URL = 'http://%s.s3.amazonaws.com/' %AWS_STORAGE_BUCKET_NAME
-    STATIC_URL = s3_URL + STATIC_ROOT
-    MEDIA_URL = s3_URL + MEDIA_ROOT
-    AWS_QUERYSTRING_AUTH =False
+    from prod import *
