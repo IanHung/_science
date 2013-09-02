@@ -31,3 +31,5 @@ s3_URL = 'http://%s.s3.amazonaws.com/' %AWS_STORAGE_BUCKET_NAME
 STATIC_URL = s3_URL + STATIC_ROOT
 MEDIA_URL = s3_URL + MEDIA_ROOT
 AWS_QUERYSTRING_AUTH =False
+
+SESSION_COOKIE_DOMAIN=".underscorescience.com"
