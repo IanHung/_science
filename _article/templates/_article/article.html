@@ -257,7 +257,7 @@ $(document).ready(function(){
 		var thisSectionPosition = $thisParent.parents(".sectionSubmission").find(".class_sectionPosition").val();
 		var thisSectionContentCounter = 0;
 		$thisParent.parents(".sectionSubmission").find(".contentInputContainer").each(function(){
-			if(!$(this).is($thisParent))
+			if (!$(this).is($thisParent)){
 			nameSetterFunction(this, thisSectionPosition, thisSectionContentCounter);
 			thisSectionContentCounter++;
 			}
@@ -266,7 +266,7 @@ $(document).ready(function(){
 		//positionNewSectionButton();
 		//positionPublishFormHelperMenu();
 		//$(".publishFormHelperMenu").hide();
-		$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter-1);
+		$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter);
 		
 		$thisParent.remove();	
 		
