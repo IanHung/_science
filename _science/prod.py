@@ -15,7 +15,7 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = ["underscorescience.com"]
+ALLOWED_HOSTS = ["underscorescience.com", ".underscorescience.com"]
 
 MEDIA_ROOT = '/media/'
 
