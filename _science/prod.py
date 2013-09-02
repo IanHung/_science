@@ -32,4 +32,9 @@ STATIC_URL = s3_URL + STATIC_ROOT
 MEDIA_URL = s3_URL + MEDIA_ROOT
 AWS_QUERYSTRING_AUTH =False
 
+#allows session cookie to apply to all sub domains.
 SESSION_COOKIE_DOMAIN=".underscorescience.com"
+
+#prepend ww for seo
+PREPEND_WWW = True
+
