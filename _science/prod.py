@@ -40,3 +40,4 @@ SESSION_COOKIE_DOMAIN=".underscorescience.com"
 PREPEND_WWW = True
 
 SECRET_KEY = os.environ['SECRET_KEY']
+print(os.environ['SECRET_KEY'])
