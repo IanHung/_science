@@ -11,7 +11,7 @@ DATABASES = {
         'NAME': os.environ['RDS_DB_NAME'],
         'USER': os.environ['RDS_USERNAME'],
         'PASSWORD': os.environ['RDS_PASSWORD'],
-        'HOST': 'underscore-science-1.caqiqxsffhyl.us-east-1.rds.amazonaws.com',
+        'HOST': os.environ['RDS_HOSTNAME'],
         'PORT': '3306',
     }
 }
