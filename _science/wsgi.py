@@ -36,6 +36,7 @@ _application = get_wsgi_application()
 def application(environ, start_response):
     os.environ['RDS_DB_NAME'] = environ["RDS_DB_NAME"]
     os.environ['RDS_USERNAME'] = environ["RDS_USERNAME"]
+    os.environ['RDS_PASSWORD'] = environ["RDS_PASSWORD"]
     return _application(environ, start_response)
 
 
