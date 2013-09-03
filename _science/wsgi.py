@@ -32,8 +32,10 @@ _application = get_wsgi_application()
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
 
+#adding apache environ variables to os.environ
 def application(environ, start_response):
     os.environ['RDS_DB_NAME'] = environ["RDS_DB_NAME"]
+    os.environ['RDS_USERNAME'] = environ["RDS_USERNAME"]
     return _application(environ, start_response)
 
 

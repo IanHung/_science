@@ -9,7 +9,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ['RDS_DB_NAME'],
-        'USER': 'IanHung',
+        'USER': os.environ['RDS_USERNAME'],
         'PASSWORD': 'Curly123',
         'HOST': 'underscore-science-1.caqiqxsffhyl.us-east-1.rds.amazonaws.com',
         'PORT': '3306',
