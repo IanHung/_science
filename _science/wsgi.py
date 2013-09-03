@@ -30,7 +30,7 @@ _application = get_wsgi_application()
 
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
-# application = HelloWorldApplication(application) TESTING
+# application = HelloWorldApplication(application) TESTING remote
 
 #adding apache environ variables to os.environ
 DEBUG = False
