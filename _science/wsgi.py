@@ -40,6 +40,7 @@ def application(environ, start_response):
     os.environ['RDS_HOSTNAME'] = environ["RDS_HOSTNAME"]
     os.environ['RDS_PORT'] = environ["RDS_PORT"]
     os.environ['AWS_ACCESS_KEY_ID'] = environ["AWS_ACCESS_KEY_ID"]
+    os.environ['AWS_SECRET_ACCESS_KEY'] = environ["AWS_SECRET_ACCESS_KEY"]
     return _application(environ, start_response)
 
 

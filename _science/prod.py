@@ -24,7 +24,7 @@ MEDIA_ROOT = '/media/'
 STATIC_ROOT = '/static/'
 
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = "wuFO2TokWO125NYRRoJ8iBqHKiLByLnA0d3he2Zj"
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 AWS_STORAGE_BUCKET_NAME ='underscore-science'
 DEFAULT_FILE_STORAGE = '_science.s3utils.MediaRootS3BotoStorage'
 STATICFILES_STORAGE = '_science.s3utils.StaticRootS3BotoStorage'
