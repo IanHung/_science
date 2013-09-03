@@ -4,7 +4,7 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
 # Django settings for _science project.
 
-DEBUG = True
+from _science.wsgi import DEBUG
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -25,9 +25,13 @@ DATABASES = {
     }
 }
 
+ 
+
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
+
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -56,6 +60,7 @@ USE_TZ = True
 # Example: "/var/www/example.com/media/"
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media').replace('\\','/')
 
+
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
@@ -65,6 +70,7 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
+
 STATIC_ROOT = ''
 
 # URL prefix for static files.
@@ -85,11 +91,11 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'v#+)kv&umx7#(mz(5$2i!psjovg%ragwx4t*6eq-7b5aju&z3)'
+SECRET_KEY = "v#+)kv&umx7#(mz(5$2i!psjovg%ragwx4t*6eq-7b5aju&z3)"
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -139,6 +145,7 @@ INSTALLED_APPS = (
      '_article',
      '_commentGarden',
      '_user',
+     'storages',
      
 )
 #Setting up user registration.
@@ -191,4 +198,10 @@ LOGGING = {
 
 TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     "django.core.context_processors.request",
+    "django.core.context_processors.static",
+    
 )
+
+
+if not DEBUG:
+    from prod import *
