@@ -8,7 +8,7 @@ import os
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'underscorescience1',
+        'NAME': os.environ['RDS_DB_NAME'],
         'USER': 'IanHung',
         'PASSWORD': 'Curly123',
         'HOST': 'underscore-science-1.caqiqxsffhyl.us-east-1.rds.amazonaws.com',

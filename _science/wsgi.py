@@ -26,8 +26,15 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "_science.settings")
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
 from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+_application = get_wsgi_application()
 
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
+
+def application(environ, start_response):
+    os.environ['RDS_DB_NAME'] = environ["RDS_DB_NAME"]
+    return _application(environ, start_response)
+
+
+
