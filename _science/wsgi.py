@@ -28,7 +28,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "_science.settings")
 from django.core.wsgi import get_wsgi_application
 _application = get_wsgi_application()
 
-# Apply WSGI middleware here.
+# Apply WSGI middleware here. la lal la
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
 
