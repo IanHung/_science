@@ -33,15 +33,19 @@ _application = get_wsgi_application()
 # application = HelloWorldApplication(application)
 
 #adding apache environ variables to os.environ
+DEBUG = True
+
 def application(environ, start_response):
-    os.environ['RDS_DB_NAME'] = environ["RDS_DB_NAME"]
-    os.environ['RDS_USERNAME'] = environ["RDS_USERNAME"]
-    os.environ['RDS_PASSWORD'] = environ["RDS_PASSWORD"]
-    os.environ['RDS_HOSTNAME'] = environ["RDS_HOSTNAME"]
-    os.environ['RDS_PORT'] = environ["RDS_PORT"]
-    os.environ['AWS_ACCESS_KEY_ID'] = environ["AWS_ACCESS_KEY_ID"]
-    os.environ['AWS_SECRET_ACCESS_KEY'] = environ["AWS_SECRET_ACCESS_KEY"]
-    os.environ['AWS_STORAGE_BUCKET_NAME'] = environ["AWS_STORAGE_BUCKET_NAME"]
+    if not DEBUG:
+        os.environ['RDS_DB_NAME'] = environ["RDS_DB_NAME"]
+        os.environ['RDS_USERNAME'] = environ["RDS_USERNAME"]
+        os.environ['RDS_PASSWORD'] = environ["RDS_PASSWORD"]
+        os.environ['RDS_HOSTNAME'] = environ["RDS_HOSTNAME"]
+        os.environ['RDS_PORT'] = environ["RDS_PORT"]
+        os.environ['AWS_ACCESS_KEY_ID'] = environ["AWS_ACCESS_KEY_ID"]
+        os.environ['AWS_SECRET_ACCESS_KEY'] = environ["AWS_SECRET_ACCESS_KEY"]
+        os.environ['AWS_STORAGE_BUCKET_NAME'] = environ["AWS_STORAGE_BUCKET_NAME"]
+        os.environ['SECRET_KEY'] = environ["SECRET_KEY"]
     return _application(environ, start_response)
 
 

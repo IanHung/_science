@@ -39,3 +39,4 @@ SESSION_COOKIE_DOMAIN=".underscorescience.com"
 #prepend ww for seo
 PREPEND_WWW = True
 
+SECRET_KEY = os.environ['SECRET_KEY']

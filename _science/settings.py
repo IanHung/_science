@@ -4,7 +4,7 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
 # Django settings for _science project.
 
-DEBUG = False
+from _science.wsgi import DEBUG
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -95,7 +95,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'v#+)kv&umx7#(mz(5$2i!psjovg%ragwx4t*6eq-7b5aju&z3)'
+SECRET_KEY = "v#+)kv&umx7#(mz(5$2i!psjovg%ragwx4t*6eq-7b5aju&z3)"
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
