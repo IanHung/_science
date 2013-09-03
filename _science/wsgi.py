@@ -41,6 +41,7 @@ def application(environ, start_response):
     os.environ['RDS_PORT'] = environ["RDS_PORT"]
     os.environ['AWS_ACCESS_KEY_ID'] = environ["AWS_ACCESS_KEY_ID"]
     os.environ['AWS_SECRET_ACCESS_KEY'] = environ["AWS_SECRET_ACCESS_KEY"]
+    os.environ['AWS_STORAGE_BUCKET_NAME'] = environ["AWS_STORAGE_BUCKET_NAME"]
     return _application(environ, start_response)
 
 
