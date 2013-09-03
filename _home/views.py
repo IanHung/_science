@@ -6,12 +6,12 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import Http404
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
-
+import os
 
 def home(request):
     all_article_list = StructureNode.objects.filter(Q(mptt_level=0)|Q(isUpdate=True)).exclude(rating__isnull=True).order_by('-rating__rating')
     paginator = Paginator(all_article_list, 25) # Show 25 contacts per page
-    
+    test = os.environ['SECRET_KEY']
     page = request.GET.get('page')
     try:
         top_article_list = paginator.page(page)        
@@ -26,7 +26,7 @@ def home(request):
         page = paginator.num_pages
         
     if page == "1":
-        return render(request, '_home/home.html', {'top_article_list':top_article_list})
+        return render(request, '_home/home.html', {'top_article_list':top_article_list, 'test':test})
     else:
         return render(request, '_home/home2.html', {'top_article_list':top_article_list})         
     
