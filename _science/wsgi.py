@@ -33,7 +33,7 @@ _application = get_wsgi_application()
 # application = HelloWorldApplication(application)
 
 #adding apache environ variables to os.environ
-DEBUG = False
+DEBUG = True
 
 def application(environ, start_response):
     if not DEBUG:
