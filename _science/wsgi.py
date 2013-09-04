@@ -36,7 +36,7 @@ _application = get_wsgi_application()
 DEBUG = False
 
 def application(environ, start_response):
-    if not DEBUG:
+    if not DEBUG and os.getenv['RDS_DB_NAME']:
         os.environ['RDS_DB_NAME'] = environ["RDS_DB_NAME"]
         os.environ['RDS_USERNAME'] = environ["RDS_USERNAME"]
         os.environ['RDS_PASSWORD'] = environ["RDS_PASSWORD"]

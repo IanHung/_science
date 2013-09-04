@@ -203,5 +203,5 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
 )
 
 
-if not DEBUG:
+if not DEBUG and os.getenv('RDS_DB_NAME'):
     from prod import *
