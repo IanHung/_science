@@ -167,6 +167,7 @@ footer {
   }
   
   .headBrand {
+    line-height:1;
     font-size:30px;
     font-family: 'Inconsolata', sans-serif;
     .mainTrademark {
@@ -229,6 +230,7 @@ img {
       .make-row();
       height:50%;
       @media screen and (max-width: 768px){
+        min-height: 400px;
         height:100%;
       }
       .heroUnitTopLeft{
@@ -251,6 +253,7 @@ img {
         .make-row();
         height:50%;
          @media screen and (max-width: 768px) {
+            min-height: 400px;
             height:100%;
           }
         .heroUnitBotLeft{
@@ -277,6 +280,9 @@ img {
       height:100%;
       position: relative;
       .box-shadow(inset 0 0 5em black);
+      @media screen and (max-width: 768px) {
+        min-height:200px;
+      }
       .heroUnitElement1Filter{
         position:absolute;
         top:0;
@@ -294,6 +300,7 @@ img {
        
         
       }
+      
        .heroUnitElement1Caption{
           position:absolute;
           top: 40%;
@@ -306,7 +313,17 @@ img {
             opacity:0.5;
             .transition(opacity 400ms);
           }
+          
+          
         }
+        .smallHeight{
+            top: 33%;
+            @media screen and (max-width: 768px) {
+              top: 30%;
+            }
+            
+          }
+        
     }
 
 .heroUnitCommentButtonPosition{
@@ -796,3 +813,7 @@ footer{
   }
 }
 
+.newnav {
+  margin-bottom: 0;
+  border-radius: 0;
+}

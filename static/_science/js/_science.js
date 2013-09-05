@@ -10,23 +10,28 @@ $(document).ready(function(){
 	var newHeroUnitHeight;
 	var newGlobalMainContentHeight;
 	if($(window).width() < 768){
-		newGlobalMainContentHeight = 3*0.5625*$(".heroUnit").width();
+		newGlobalMainContentHeight = Math.max(3*0.5625*$(".heroUnit").width(), 0.5625*$(".heroUnit").width()+800, 1039);
+		newHeroUnitHeight = Math.max(0.5625*$(".heroUnit").width(), 239);
 	}
 	else{
 		newGlobalMainContentHeight = 0.5625*$(".heroUnit").width();
+		newHeroUnitHeight = 0.5625*$(".heroUnit").width();
 	}
-	newHeroUnitHeight = 0.5625*$(".heroUnit").width();
 	$(".heroUnit").height(newHeroUnitHeight);
 	$(".globalMainContent").height(newGlobalMainContentHeight);
 	$(window).resize(function(){
-		newHeroUnitHeight = 0.5625*$(".heroUnit").width();
-		$(".heroUnit").height(newHeroUnitHeight);
+		
+		
 		if($(window).width() < 768){
-			newGlobalMainContentHeight = 3*0.5625*$(".heroUnit").width();
+			newGlobalMainContentHeight = Math.max(3*0.5625*$(".heroUnit").width(), 0.5625*$(".heroUnit").width()+800, 1039);
+			newHeroUnitHeight = Math.max(0.5625*$(".heroUnit").width(), 239);
 		}
 		else{
 			newGlobalMainContentHeight = 0.5625*$(".heroUnit").width();
+			newHeroUnitHeight = 0.5625*$(".heroUnit").width();
 		}
+		$(".heroUnit").height(newHeroUnitHeight);
 		$(".globalMainContent").height(newGlobalMainContentHeight);
+		
 	});
 });

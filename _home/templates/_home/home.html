@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% load mptt_tags %}
 
-{% block title %}
- Homepage
-{% endblock %}
-
 {% block head %}
 <script>
 $(document).ready(function(){
@@ -43,7 +39,7 @@ $(document).ready(function(){
 				<div class="heroUnitTopLeft">
 					<div class="heroUnitElement1 element1">
 					
-						<div class="heroUnitElement1Caption" onclick="window.location='{% url 'article' top_article_list.1.url %}';">
+						<div class="heroUnitElement1Caption smallHeight" onclick="window.location='{% url 'article' top_article_list.1.url %}';">
 							<h3>{{ top_article_list.1.title }}</h3>
 							<p><b>By:</b> {{ top_article_list.1.author.username }} on {{ top_article_list.1.pubDate|date }}</p>
 						</div>
@@ -56,7 +52,7 @@ $(document).ready(function(){
 				<div class="heroUnitTopRight">
 					<div class="heroUnitElement1 element2">
 					
-						<div class="heroUnitElement1Caption" onclick="window.location='{% url 'article' top_article_list.2.url %}';">
+						<div class="heroUnitElement1Caption smallHeight" onclick="window.location='{% url 'article' top_article_list.2.url %}';">
 							<h3>{{ top_article_list.2.title }}</h3>
 							<p><b>By:</b> {{ top_article_list.2.author.username }} on {{ top_article_list.2.pubDate|date }}</p>
 						</div>
@@ -72,7 +68,7 @@ $(document).ready(function(){
 				<div class="heroUnitBotLeft">
 					<div class="heroUnitElement1 element3">
 					
-						<div class="heroUnitElement1Caption" onclick="window.location='{% url 'article' top_article_list.3.url %}';">
+						<div class="heroUnitElement1Caption smallHeight" onclick="window.location='{% url 'article' top_article_list.3.url %}';">
 							<h3>{{ top_article_list.3.title }}</h3>
 							<p><b>By:</b> {{ top_article_list.3.author.username }} on {{ top_article_list.3.pubDate|date }}</p>
 						</div>
@@ -85,7 +81,7 @@ $(document).ready(function(){
 				<div class="heroUnitBotRight">
 					<div class="heroUnitElement1 element4">
 					
-						<div class="heroUnitElement1Caption" onclick="window.location='{% url 'article' top_article_list.4.url %}';">
+						<div class="heroUnitElement1Caption smallHeight" onclick="window.location='{% url 'article' top_article_list.4.url %}';">
 							<h3>{{ top_article_list.4.title }}</h3>
 							<p><b>By:</b> {{ top_article_list.4.author.username }} on {{ top_article_list.4.pubDate|date }}</p>
 						</div>
