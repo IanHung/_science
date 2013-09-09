@@ -39,3 +39,8 @@ def getSubject(request, subject_url):
     
     return render(request, '_home/home.html', {'top_article_list':top_article_list})
 
+def about(request):
+    return render(request, '_home/about.html')
+
+def contact(request):
+    return render(request)

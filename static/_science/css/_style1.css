@@ -6277,6 +6277,9 @@ fieldset[disabled] .btn-publish-deleteSection.active {
 h2 a {
   color: black;
 }
+.globalMainContent {
+  min-height: 1px;
+}
 .globalFooter hr {
   margin-top: 0;
 }

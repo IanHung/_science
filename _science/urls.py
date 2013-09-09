@@ -13,7 +13,7 @@ urlpatterns = patterns('',
      url(r'^subject/', include('_home.urls')),
      url(r'^comment/', include('_commentGarden.urls')),
      url(r'^user/', include('_user.urls')),
-
+     url(r'^about/$', '_home.views.about', name='about'),
     # url(r'^_science/', include('_science.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

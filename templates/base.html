@@ -9,7 +9,7 @@
     	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     	<meta name="description" content="">
     	<meta name="viewport" content = "device-width, initial-scale=1.0">
-    	<title>_Science{% block title %}{% endblock %}</title>
+    	<title>_Science |{% block title %}{% endblock %}</title>
     	<link rel = "stylesheet" type="text/css" href="{% static '_science/css/_style1.css' %}"/>
     	<link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/font-awesome.min.css' %}"/>
     	<script src="{% static 'jquery/js/jquery-1.9.1.min.js' %}"></script> 	
@@ -29,7 +29,9 @@
 		</div>
 		<div class="globalMainContent">
 		{% block mainContent %}{% endblock %}
+		
 		</div>
+		{% block mainContent2 %}{% endblock %}
 		<div class="container">
 			<div class="mainContentContainer">
 				<div class="bulkContainer">

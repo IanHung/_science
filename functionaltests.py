@@ -17,12 +17,18 @@ class HomeFunctionTest(unittest.TestCase):
         self.browser.quit()
         
     def test_homepage_load(self):
-        #Felicity Archer has heard about a cool new online to do app. She goes
+        #Felicity Archer has heard about a cool new online labbook app. She goes
         #to check out its homepage
         self.browser.get('http://localhost:8000')
         
         #She notices the page title and header mentions _science 
         self.assertIn('_Science', self.browser.title)
+        
+    def test_aboutpage_load(self):
+        #Felicity Archer wants to find out more about this project.
+        #She visits the about page.
+        #There she sees a title and a brief introduction
+        self.browser.get('http://localhost:8000/about')
         
 if __name__ == '__main__':
     unittest.main()
