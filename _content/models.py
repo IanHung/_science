@@ -269,6 +269,7 @@ def hashTagParser(string):
     listOfTags = re.split(r'\s{2,}|#', string)
     listOfTags = map(unicode.strip, listOfTags)
     listOfTags = filter(None, listOfTags)
+    listOfTags = map(lambda x: x.lower(), listOfTags)
     return listOfTags
 
 def tagSaveHelper(string):

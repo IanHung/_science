@@ -32,9 +32,12 @@ _application = get_wsgi_application()
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application) TESTING
 
-#adding apache environ variables to os.environ
-DEBUG = False
-
+#adding apache environ variables to os.environ DEBUG must be FALSE for production environment to work.
+try:
+    DEBUG = os.environ['DEBUG']
+except KeyError:
+    DEBUG = False
+    
 def application(environ, start_response):
     if not DEBUG:
         os.environ['RDS_DB_NAME'] = environ["RDS_DB_NAME"]
