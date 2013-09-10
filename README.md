@@ -1,5 +1,4 @@
 _science
 ========
 
-Repo for underscorescience website. test
-
+Repo for underscorescience website.
