@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
+from django.utils.http import urlquote
 
 @login_required
 def userDashboard(request):
@@ -113,7 +115,15 @@ def userPublish(request):
 @login_required
 def userSearchForm(request):
     if (request.method == 'POST'):
-        return HttpResponseRedirect(reverse('userLabbookTag', args=[request.POST['search']]))
+        if request.POST.get('search', False):
+            tagList = hashTagParser(request.POST['search'].replace("#", "  ").strip())
+            subject_url = ""
+            for tag in tagList:
+                subject_url = subject_url + "#" + urlquote(tag)
+            argsSearchForm=[subject_url.replace("#", "  ").strip()]
+            return HttpResponseRedirect(reverse('userLabbookTag', args=argsSearchForm))
+        else:
+            return HttpResponseRedirect(reverse('userLabbook'))
 
 
 @login_required
@@ -128,7 +138,7 @@ def userLabbookTextForm(request, subject_url=None):
             return HttpResponseRedirect('/user/labbook/')
         else:
             if (subject_url):            
-                labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate').filter(tag__name__iexact=subject_url)
+                labbook_list = subjectURLqueryList(request.user,subject_url)
             else:
                 labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate')                
             return render(request, '_user/labbook.html', {'labbook_list': labbook_list, 'textForm': text_form, 'imageForm': image_form, 'timelikeForm':timelike_form,'dataForm': data_form, 'subject_url':subject_url, 'updateForm':update_form}) 
@@ -149,8 +159,9 @@ def userLabbookUpdateForm(request, subject_url=None):
             restrictedTagListSave(request, changedNode, tagList) 
             return HttpResponseRedirect('/user/labbook/')
         else:
-            if (subject_url):            
-                labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate').filter(tag__name__iexact=subject_url)
+            if (subject_url):
+                            
+                labbook_list = subjectURLqueryList(request.user,subject_url)
             else:
                 labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate')                
             return render(request, '_user/labbook.html', {'labbook_list': labbook_list, 'textForm': text_form, 'imageForm': image_form, 'timelikeForm':timelike_form,'dataForm': data_form, 'subject_url':subject_url, 'updateForm':update_form})             
@@ -168,7 +179,7 @@ def userLabbookImageForm(request, subject_url=None):
             return HttpResponseRedirect('/user/labbook/')
         else:
             if (subject_url):            
-                labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate').filter(tag__name__iexact=subject_url)
+                labbook_list = subjectURLqueryList(request.user,subject_url)
             else:
                 labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate')                
             return render(request, '_user/labbook.html', {'labbook_list': labbook_list, 'textForm': text_form, 'imageForm': image_form, 'timelikeForm':timelike_form,'dataForm': data_form, 'subject_url':subject_url, 'updateForm':update_form}) 
@@ -185,7 +196,7 @@ def userLabbookTimelikeForm(request, subject_url=None):
             return HttpResponseRedirect('/user/labbook/')
         else:
             if (subject_url):            
-                labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate').filter(tag__name__iexact=subject_url)
+                labbook_list = subjectURLqueryList(request.user,subject_url)
             else:
                 labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate')                
             return render(request, '_user/labbook.html', {'labbook_list': labbook_list, 'textForm': text_form, 'imageForm': image_form, 'timelikeForm':timelike_form,'dataForm': data_form, 'subject_url':subject_url, 'updateForm':update_form}) 
@@ -204,7 +215,7 @@ def userLabbookDataForm(request, subject_url=None):
             return HttpResponseRedirect('/user/labbook/')
         else:
             if (subject_url):            
-                labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate').filter(tag__name__iexact=subject_url)
+                labbook_list = subjectURLqueryList(request.user,subject_url)
             else:
                 labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate')                
             return render(request, '_user/labbook.html', {'labbook_list': labbook_list, 'textForm': text_form, 'imageForm': image_form, 'timelikeForm':timelike_form,'dataForm': data_form, 'subject_url':subject_url, 'updateForm':update_form})      
@@ -220,17 +231,18 @@ def userLabbook(request, subject_url=None):
     print(request.POST)
   
     if (subject_url):            
-        labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate').filter(tag__name__iexact=subject_url)
+        labbook_list = subjectURLqueryList(request.user,subject_url)
     else:
         labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate')                
     return render(request, '_user/labbook.html', {'labbook_list': labbook_list, 'textForm': text_form, 'imageForm': image_form, 'timelikeForm':timelike_form,'dataForm': data_form, 'subject_url':subject_url, 'updateForm':update_form}) #'form':CommentForm()})
 
 def userLabbookNameTag(request, user_url, subject_url=None):
     userName = user_url
+    user = User.objects.get(username = user_url)
     if (subject_url):            
-        labbook_list = StructureNode.objects.filter(isLabnote = True, author__username=request.user__username).exclude(content_type = None).order_by('-pubDate').filter(tag__name__iexact=subject_url)
+        labbook_list = subjectURLqueryList(user,subject_url)
     else:
-        labbook_list = StructureNode.objects.filter(isLabnote = True, author__username=request.user__username).exclude(content_type = None).order_by('-pubDate')
+        labbook_list = StructureNode.objects.filter(isLabnote = True, author=user).exclude(content_type = None).order_by('-pubDate')
     return render(request, '_user/labbookUser.html', {'labbook_list': labbook_list, 'userName':userName, 'subject_url':subject_url})      
 
 def textFormLabbookSave(request):
@@ -344,3 +356,11 @@ def getPositionForRoots():
         return StructureNode.objects.filter(mptt_level=0).order_by('-position')[0].position+1
     else:
         return 1
+    
+def subjectURLqueryList(user,subject_url):
+    tagList = hashTagParser(subject_url)
+    querySet = StructureNode.objects.filter(isLabnote = True, author=user).exclude(content_type = None).order_by('-pubDate')
+    for tag in tagList:
+        querySet = querySet.filter(tag__name__iexact=tag)
+    return querySet
+    
