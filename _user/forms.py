@@ -3,11 +3,11 @@ from django import forms
 class ParagraphFormLabbook(forms.Form):
     textFormTitle = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Title", }))
     textFormText = forms.CharField(widget=forms.Textarea(attrs={"row": 5,}))
-    textFormTag = forms.CharField(required=False)
+    textFormTag = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",}), required=False)
         
 class ImageFormLabbook(forms.Form):
     imageFormTitle = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Title", }))
-    imageFormTag = forms.CharField(required=False)
+    imageFormTag = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",}), required=False)
     imageFormLocalSource = forms.ImageField(required=False)
     imageFormLinkSource = forms.URLField(widget=forms.TextInput(attrs={"placeholder": "Enter URL of image."}),required=False)
     
@@ -22,7 +22,7 @@ class ImageFormLabbook(forms.Form):
         
 class TimelikeFormLabbook(forms.Form):
     timelikeFormTitle = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Title", "accept": "video/*",}))
-    timelikeFormTag = forms.CharField(required=False)
+    timelikeFormTag = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",}), required=False)
     timelikeFormLocalSource = forms.FileField(required=False)
     timelikeFormLinkSource = forms.URLField(widget=forms.TextInput(attrs={"placeholder": "Enter URL of video."}),required=False)
         
@@ -37,12 +37,12 @@ class TimelikeFormLabbook(forms.Form):
     
 class DataFormLabbook(forms.Form):
     dataFormTitle = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Title", }))
-    dataFormTag = forms.CharField(required=False)
+    dataFormTag = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",}), required=False)
     
 class PublishForm(forms.Form):
     publishFormTitle = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Title", }))
-    publishFormTag = forms.CharField(required=False)
+    publishFormTag = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",}), required=False)
     
 class UpdateFormLabbook(forms.Form):
     updateFormTitle = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Title", }))
-    updateFormTag = forms.CharField(required=False)
+    updateFormTag = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control",}), required=False)
