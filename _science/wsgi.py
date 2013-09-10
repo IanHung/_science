@@ -33,8 +33,10 @@ _application = get_wsgi_application()
 # application = HelloWorldApplication(application) TESTING
 
 #adding apache environ variables to os.environ DEBUG must be FALSE for production environment to work.
-
-DEBUG = False
+try:
+    DEBUG = os.environ['DEBUG']
+except :
+    DEBUG = False
     
 def application(environ, start_response):
     if not DEBUG:
