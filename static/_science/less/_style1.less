@@ -28,7 +28,6 @@ body {
 } 
 
 
-
 .experimentTitle {
  
 }
@@ -38,23 +37,23 @@ body {
   position: relative;
   .make-row();
   .sideContainer{
-    .make-column(3);
+    .make-sm-column(3);
     
     .commentContainer {
         .make-row();
         
         .commentMeta{
-          .make-column(12);
+          .make-sm-column(12);
           
         }
         .commentContent{
-          .make-column(12);
+          .make-sm-column(12);
       
         }
       }
   }
   .bulkContainer{
-      .make-column(9);
+      .make-sm-column(9);
     
     .articlePreviewList {
       
@@ -62,26 +61,26 @@ body {
         .make-row();
         position: relative;
         .previewThumbnail {
-          .make-column(3);
+          .make-sm-column(3);
               
         }
         .previewParagraphWImage {
-          .make-column(9);
+          .make-sm-column(9);
         }
         
         .previewPragraph {
-          .make-column(12);
+          .make-sm-column(12);
         }
       }
     }
     .articleContainer {
       .make-row();
             .articleMeta{
-        .make-column(4);
+        .make-sm-column(4);
       }
       .articleContent{
         
-        .make-column(8);
+        .make-sm-column(8);
         .contentContainer{
           position:relative;
           margin-right: 50px;
@@ -105,15 +104,15 @@ body {
         position: relative;
         .make-row();
       .previewThumbnail {
-        .make-column(12);
+        .make-sm-column(12);
             
       }
       .previewParagraphWImage {
-        .make-column(12);
+        .make-sm-column(12);
       }
       
       .previewPragraph {
-        .make-column(12);
+        .make-sm-column(12);
       }
     }
   }
@@ -139,11 +138,11 @@ body {
   display: block;
   .make-row();
   .commentFlowerMeta{
-    .make-column(12);
+    .make-sm-column(12);
     border: 1px solid #ddd;
   }
   .commentFlowerContent{
-    .make-column(12);
+    .make-sm-column(12);
     border: 1px solid #ddd;
     
   }
@@ -219,12 +218,12 @@ img {
   width: 100%;
   .make-row();
   .heroUnitLeft {
-    .make-column(6);
+    .make-sm-column(6);
     height:100%;
     
   }
   .heroUnitRight{
-    .make-column(6);
+    .make-sm-column(6);
     height:100%;
     .heroUnitTop{
       .make-row();
@@ -234,14 +233,14 @@ img {
         height:100%;
       }
       .heroUnitTopLeft{
-        .make-column(6);
+        .make-sm-column(6);
         height:100%;
          @media screen and (max-width: 768px){
             height:50%;
           }
       }
       .heroUnitTopRight{
-        .make-column(6);
+        .make-sm-column(6);
         height:100%;
          @media screen and (max-width: 768px){
             height:50%;
@@ -257,14 +256,14 @@ img {
             height:100%;
           }
         .heroUnitBotLeft{
-          .make-column(6);
+          .make-sm-column(6);
           height:100%;
           @media screen and (max-width: 768px){
             height:50%;
           }
         }
         .heroUnitBotRight{
-          .make-column(6);
+          .make-sm-column(6);
           height:100%;
           @media screen and (max-width: 768px){
             height:50%;
@@ -376,7 +375,7 @@ img {
 .submission {
   .make-row();
   .submitLabel {
-    .make-column(2);
+    .make-sm-column(2);
   }
   .submissionBulk {
     .clearfix();
@@ -402,29 +401,10 @@ img {
 }
 
 .input-prepend{
-  display: inline-block;
-  margin-bottom:10px;
-  font-size: 0;
-  white-space: nowrap;
-  vertical-align: middle;
-  width:100%;
+    .input-group;    
   
   .add-on{
-    margin-right: -1px;
-    vertical-align: top;
-    display: inline-block;
-    width: auto;
-    min-width: 16px;
-    padding: 4px 5px;
-    font-size: 20px;
-    font-weight: normal;
-    text-align: center;
-    text-shadow: 0 1px 0 #ffffff;
-    background-color:#eeeeee;
-    border: 1px solid #ccc;
-    &:first-child{
-      border-radius: 4px 0 0 4px;
-    }
+    .input-group-addon;
   } 
 }
 
@@ -439,12 +419,11 @@ img {
 
 .tagSubmission{
   .tagInputContainer{
+    
    input{
       .form-control;
-      display: inline;
-      width: -moz-calc(~"100% - 33px");
-      width: -webkit-calc(~"100% - 33px");
-      width: calc(~"100% - 33px");
+      
+      
     }
   }
 }
@@ -483,7 +462,7 @@ img {
   .make-row();
   margin-top:15px;
   .postMeta{
-    .make-column(3);
+    .make-sm-column(3);
     //background-color: #62A0AD;
     padding: 15px;
     border-radius: 4px;
@@ -494,7 +473,7 @@ img {
   
   .postContent{
    
-    .make-column(9);
+    .make-sm-column(9);
     padding: 15px;
   }
 }
@@ -558,16 +537,13 @@ img {
   }
   
   .userSearchInput {
-    width: -moz-calc(~"100% - 65px");
-    width: -webkit-calc(~"100% - 65px");
-    width: calc(~"100% - 65px");
-    min-width: 138px;
+
   }
   
 }
 
 #searchFormButton{
-  padding: 8px 8px;
+ 
 }
 
 .publishFormHelperMenu{
@@ -604,7 +580,7 @@ img {
     
   }
   .publishFormSubmission{
-    .make-column(8);
+    .make-sm-column(8);
     .titleSubmission{
       margin-bottom:15px;
     }
@@ -614,7 +590,7 @@ img {
   }
   
   .publishAddNewSectionContainer{
-    .make-column(3);
+    .make-sm-column(3);
     .btn-publish-newSection{
       margin: 15px;
     }
@@ -653,18 +629,18 @@ img {
 }
 
 .articleBulkContainer {
-  .make-column(7.5);
+  .make-sm-column(7.5);
       .articleContainer {
       .make-row();
        .articleMeta{
          padding-top: 5px;
-        .make-column(3);
+        .make-sm-column(3);
       }
       .articleContent{
         h2 {
           margin:0;
         }
-        .make-column(9);
+        .make-sm-column(9);
         .contentContainer{
           
           position:relative;
@@ -677,7 +653,7 @@ img {
 
 .articleSideContainer {
   
-  .make-column(4.5);
+  .make-sm-column(4.5);
   .publishFormContainer{
     .make-row();
     
@@ -685,11 +661,11 @@ img {
         .make-row();
         
         .commentMeta{
-          .make-column(12);
+          .make-sm-column(12);
           
         }
         .commentContent{
-          .make-column(12);
+          .make-sm-column(12);
       
         }
       }
@@ -711,8 +687,8 @@ img {
       }
     }
     .publishFormSubmission{
-      .make-column(11.5);
-      .make-column-offset(0.5);
+      .make-sm-column(11.5);
+      .make-sm-column-offset(0.5);
       .titleSubmission{
         margin-bottom:0;
       }
@@ -751,11 +727,12 @@ img {
   margin-right: 27px;
 }
 
+.sectionTitleSubmission{
+  .input-group;
+}
+
 .sectionTitleInput{
-  display:inline;
-  width: -moz-calc(~"100% - 149px");
-  width: -webkit-calc(~"100% - 149px");
-  width: calc(~"100% - 149px");
+  .form-control;
 }
 
 .btn-publish-deleteSection{
@@ -765,7 +742,7 @@ img {
 
 
 .form-group1, .form-group2 {
-  .make-column(4);
+  .make-sm-column(4);
 }
 
 .class_login, .class_logout {

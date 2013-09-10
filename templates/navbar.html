@@ -14,17 +14,18 @@
 	<div class="navbar navbar-inverse">
 
     <!-- .navbar-toggle is used as the toggle for collapsed navbar content -->
-    <a href={% url "home" %} class="navbar-brand">_science</a>
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-
+    <div class="navbar-header">
+    	<a href={% url "home" %} class="navbar-brand">_science</a>
+	    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+	      <span class="icon-bar"></span>
+	      <span class="icon-bar"></span>
+	      <span class="icon-bar"></span>
+	    </button>
+	</div>
     <!-- Be sure to leave the brand out there if you want it shown -->
 
     <!-- Place everything within .navbar-collapse to hide it until above 768px -->
-    <div class="nav-collapse collapse navbar-responsive-collapse">
+    <div class="navbar-collapse collapse navbar-responsive-collapse">
     	<ul class="nav navbar-nav">
 		  <li><a href={% url "home" %}>Home</a></li>
 		  <li><a href="#">Browse</a></li>

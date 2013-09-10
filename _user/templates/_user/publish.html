@@ -125,7 +125,7 @@ $(document).ready(function () {
 	//Add New Section
 	$("#addNewSection").on('click', function(){
 		var $this = $(this);
-		$(".sectionSubmission").last().after('<div class="sectionSubmission"><div class="sectionTitleSubmission"><input class="sectionTitleInput form-control" name="section_title_'+ sectionCounter +'" type="text" placeholder="Section Title"><button type="button" class="btn btn-publish-deleteSection">Delete This Section</button></div><div class="emptyContentContainer">Click to Add Content Here</div><div class="hiddenFields""><input type="hidden" class="class_numberOfContentSections" id="id_numberOfContentSections_'+ sectionCounter +'" name="numberOfContentSections_'+ sectionCounter +'" value=0><input type="hidden" class="class_sectionPosition" name="sectionPosition" value='+ sectionCounter +'></div></div>');
+		$(".sectionSubmission").last().after('<div class="sectionSubmission"><div class="sectionTitleSubmission input-group"><input class="sectionTitleInput form-control" name="section_title_'+ sectionCounter +'" type="text" placeholder="Section Title"><span class="input-group-btn"><button type="button" class="btn btn-publish-deleteSection">Delete This Section</button></span></div><div class="emptyContentContainer">Click to Add Content Here</div><div class="hiddenFields""><input type="hidden" class="class_numberOfContentSections" id="id_numberOfContentSections_'+ sectionCounter +'" name="numberOfContentSections_'+ sectionCounter +'" value=0><input type="hidden" class="class_sectionPosition" name="sectionPosition" value='+ sectionCounter +'></div></div>');
 		sectionCounter++;
 		
 		
@@ -305,8 +305,8 @@ $(document).ready(function () {
 				</div>
 			</div>
 			<div class="sectionSubmission">
-				<div class="sectionTitleSubmission">
-					<input class="sectionTitleInput form-control" name="section_title_0" type="text" placeholder="Section Title"><button type="button" class="btn btn-publish-deleteSection">Delete This Section</button>
+				<div class="sectionTitleSubmission input-group">
+					<input class="sectionTitleInput form-control" name="section_title_0" type="text" placeholder="Section Title"><span class="input-group-btn"><button type="button" class="btn btn-publish-deleteSection">Delete This Section</button></span>
 				</div>
 				<div class="emptyContentContainer">Click to Add Content Here</div>
 				<div class="hiddenFields">
