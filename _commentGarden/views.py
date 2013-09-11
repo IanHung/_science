@@ -19,9 +19,9 @@ def submitComment(request):
         print(request.POST)
         publishForm = PublishForm(request.POST)
         if (publishForm.is_valid()):
-            tagList = hashTagParser(request.POST['publishFormTag'])
+            tagList = hashTagParser(publishForm.cleaned_data['publishFormTag'])
             commentNode = StructureNode()
-            commentNode.title= request.POST['publishFormTitle']
+            commentNode.title= publishForm.cleaned_data['publishFormTitle']
             commentNode.parent_id = int(request.POST['sectionParent'])
             commentNode.author = request.user
             commentNode.isComment = True

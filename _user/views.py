@@ -37,12 +37,12 @@ def userPublish(request):
         publishForm = PublishForm(request.POST)
         if (publishForm.is_valid()):
             experimentNode = StructureNode()
-            experimentNode.title = request.POST['publishFormTitle']
+            experimentNode.title = publishForm.cleaned_data['publishFormTitle']
             experimentNode.author = request.user
             experimentNode.isPublished = True
             experimentNode.position = getPositionForRoots()
             experimentNode.save()
-            tagList = hashTagParser(request.POST['publishFormTag'])
+            tagList = hashTagParser(publishForm.cleaned_data['publishFormTag'])
             restrictedTagListSave(request, experimentNode, tagList) 
             for sectionNodeIndex in range(0, int(request.POST['numberOfSections'])):
                 sectionNode = StructureNode()
@@ -153,9 +153,9 @@ def userLabbookUpdateForm(request, subject_url=None):
         update_form = UpdateFormLabbook(request.POST)
         if update_form.is_valid():
             changedNode = StructureNode.objects.get(pk=int(request.POST['parentID']))
-            changedNode.title = request.POST['updateFormTitle']
+            changedNode.title = update_form.cleaned_data['updateFormTitle']
             changedNode.tag_set.clear()
-            tagList = hashTagParser(request.POST['updateFormTag'])
+            tagList = hashTagParser(update_form.cleaned_data['updateFormTag'])
             restrictedTagListSave(request, changedNode, tagList) 
             return HttpResponseRedirect('/user/labbook/')
         else:
@@ -246,12 +246,13 @@ def userLabbookNameTag(request, user_url, subject_url=None):
     return render(request, '_user/labbookUser.html', {'labbook_list': labbook_list, 'userName':userName, 'subject_url':subject_url})      
 
 def textFormLabbookSave(request):
-        if (ParagraphFormLabbook(request.POST).is_valid()):
+        paragraphFormLabbook = ParagraphFormLabbook(request.POST)
+        if (paragraphFormLabbook.is_valid()):
             tempParagraph = Paragraph()
-            tempParagraph.text = request.POST['textFormText'] 
+            tempParagraph.text = paragraphFormLabbook.cleaned_data['textFormText'] 
             tempParagraph.save()
             tempStructureNode = StructureNode()
-            tempStructureNode.title = request.POST['textFormTitle']
+            tempStructureNode.title = paragraphFormLabbook.cleaned_data['textFormTitle']
             tempStructureNode.author = request.user
             tempStructureNode.content_type = ContentType.objects.get_for_model(Paragraph)
             tempStructureNode.object_id = tempParagraph.id
@@ -260,7 +261,7 @@ def textFormLabbookSave(request):
             tempStructureNode.isComment = False
             tempStructureNode.isLabnote = True
             tempStructureNode.save()
-            tagList = hashTagParser(request.POST['textFormTag'])
+            tagList = hashTagParser(paragraphFormLabbook.cleaned_data['textFormTag'])
             restrictedTagListSave(request, tempStructureNode, tagList)  
             print("something is valid")
             return True
@@ -269,15 +270,16 @@ def textFormLabbookSave(request):
             return False
         
 def imageFormLabbookSave(request):
-        if (ImageFormLabbook(request.POST, request.FILES).is_valid()):
+        imageFormLabbook = ImageFormLabbook(request.POST, request.FILES)
+        if (imageFormLabbook.is_valid()):
             tempImage = Image()
             if (request.POST.get('imageFormLinkSource',False)):
-                tempImage.linkSource = request.POST['imageFormLinkSource']
+                tempImage.linkSource = imageFormLabbook.cleaned_data['imageFormLinkSource']
             if (request.FILES.get('imageFormLocalSource', False)):
-                tempImage.localSource = request.FILES['imageFormLocalSource']
+                tempImage.localSource = imageFormLabbook.cleaned_data['imageFormLocalSource']
             tempImage.save()
             tempStructureNode = StructureNode()
-            tempStructureNode.title = request.POST['imageFormTitle']
+            tempStructureNode.title = imageFormLabbook.cleaned_data['imageFormTitle']
             tempStructureNode.author = request.user
             tempStructureNode.content_type = ContentType.objects.get_for_model(Image)
             tempStructureNode.object_id = tempImage.id
@@ -286,7 +288,7 @@ def imageFormLabbookSave(request):
             tempStructureNode.isComment = False
             tempStructureNode.isLabnote = True
             tempStructureNode.save()
-            tagList = hashTagParser(request.POST['imageFormTag'])
+            tagList = hashTagParser(imageFormLabbook.cleaned_data['imageFormTag'])
             restrictedTagListSave(request, tempStructureNode, tagList)  
             print("something is valid")
             return True
@@ -295,15 +297,16 @@ def imageFormLabbookSave(request):
             return False
         
 def timelikeFormLabbookSave(request):
-        if (TimelikeFormLabbook(request.POST, request.FILES).is_valid()):
+        timelikeFormLabbook = TimelikeFormLabbook(request.POST, request.FILES)
+        if (timelikeFormLabbook.is_valid()):
             tempTimelike = Timelike()
             if (request.POST.get('timelikeFormLinkSource',False)):
-                tempTimelike.linkSource = request.POST['timelikeFormLinkSource']
+                tempTimelike.linkSource = timelikeFormLabbook.cleaned_data['timelikeFormLinkSource']
             if (request.FILES.get('timelikeFormLocalSource', False)):
-                tempTimelike.localSource = request.FILES['timelikeFormLocalSource']
+                tempTimelike.localSource = timelikeFormLabbook.cleaned_data['timelikeFormLocalSource']
             tempTimelike.save()
             tempStructureNode = StructureNode()
-            tempStructureNode.title = request.POST['timelikeFormTitle']
+            tempStructureNode.title = timelikeFormLabbook.cleaned_data['timelikeFormTitle']
             tempStructureNode.author = request.user
             tempStructureNode.content_type = ContentType.objects.get_for_model(Timelike)
             tempStructureNode.object_id = tempTimelike.id
@@ -312,7 +315,7 @@ def timelikeFormLabbookSave(request):
             tempStructureNode.isComment = False
             tempStructureNode.isLabnote = True
             tempStructureNode.save()
-            tagList = hashTagParser(request.POST['timelikeFormTag'])
+            tagList = hashTagParser(timelikeFormLabbook.cleaned_data['timelikeFormTag'])
             restrictedTagListSave(request, tempStructureNode, tagList)   
             print("something is valid")
             return True
@@ -321,12 +324,13 @@ def timelikeFormLabbookSave(request):
             return False
         
 def dataFormLabbookSave(request):
-        if (DataFormLabbook(request.POST).is_valid()):
+        dataFormLabbook = DataFormLabbook(request.POST)
+        if (dataFormLabbook.is_valid()):
             tempDataset = Dataset()
             tempDataset.data = datasetFormatter(request.POST) 
             tempDataset.save()
             tempStructureNode = StructureNode()
-            tempStructureNode.title = request.POST['dataFormTitle']
+            tempStructureNode.title = dataFormLabbook.cleaned_data['dataFormTitle']
             tempStructureNode.author = request.user
             tempStructureNode.content_type = ContentType.objects.get_for_model(Dataset)
             tempStructureNode.object_id = tempDataset.id
@@ -335,7 +339,7 @@ def dataFormLabbookSave(request):
             tempStructureNode.isComment = False
             tempStructureNode.isLabnote = True
             tempStructureNode.save()
-            tagList = hashTagParser(request.POST['dataFormTag'])
+            tagList = hashTagParser(dataFormLabbook.cleaned_data['dataFormTag'])
             restrictedTagListSave(request, tempStructureNode, tagList) 
             print("something is valid")
             return True

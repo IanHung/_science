@@ -181,7 +181,12 @@ class Image(models.Model):
     
     def isLocalSource(self):
         return not(not self.localSource)
-        
+    
+    def getImageURL(self):
+        if self.isLinkSource():
+            return self.linkSource
+        elif self.isLocalSource():
+            return self.localSource.url        
     
 class Timelike(models.Model):
     structureNode = generic.GenericRelation(StructureNode)
