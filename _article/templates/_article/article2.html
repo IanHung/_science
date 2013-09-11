@@ -52,10 +52,8 @@
 	    	{% elif node.isTypeImage and node.isPublished == True and not node.is_root_node %}
 	    			
 		    		<p>This is an Image.</p>
-		    		{% if node.content_object.isLinkSource and node.isPublished == True %}
-		    			<p>This is from a link.</p><div class='contentContainerImage {{ StructureNode.slug }}'><img src={{ node.content_object.linkSource }} alt="" /></div>
-		    		{% elif node.content_object.isLocalSource and node.isPublished == True %}
-		    			<p>This is local.</p> <div class='contentContainerImage {{ node.slug }}'><img src={{ node.content_object.localSource.url }} alt="" /></div> 
+		    		{% if node.isPublished == True %}
+		    			<p>This is from a link.</p><div class='contentContainerImage {{ StructureNode.slug }}'><img src={{ node.content_object.getImageURL }} alt="" /></div>
 		    		{% endif %}
 		    	
 	    	{% elif node.isTypeTimelike and node.isPublished == True and not node.is_root_node %}

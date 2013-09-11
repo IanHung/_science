@@ -7,7 +7,7 @@ $(document).ready(function(){
 	{% for StructureNode in top_article_list %}
 		{% if forloop.counter < 6 and StructureNode.getNearestAbstractImage %}
 		var tempIndex = {{forloop.counter}}-1;
-		$(".element" + tempIndex).css("background-image", "url({% if StructureNode.getNearestAbstractImage.localSource %}{{ StructureNode.getNearestAbstractImage.localSource.url }}{% else %}{{ StructureNode.getNearestAbstractImage.linkSource }}{% endif %})");
+		$(".element" + tempIndex).css("background-image", "url({{ StructureNode.getNearestAbstractImage.getImageURL }})");
 		{% endif %}
 	{% endfor %}
 });
@@ -109,7 +109,7 @@ $(document).ready(function(){
 			<h2><a href={% url "article" StructureNode.url %}>{{ StructureNode.title }}</a></h2>
 			<p>{{ StructureNode.pubDate|date }}</p>
 			
-				{% if StructureNode.getNearestAbstractImage %}<div class="previewThumbnail"><img src={% if StructureNode.getNearestAbstractImage.localSource %}{{ StructureNode.getNearestAbstractImage.localSource.url }}{% else %}{{ StructureNode.getNearestAbstractImage.linkSource }}{% endif %} class="img-rounded" alt="" /></div>
+				{% if StructureNode.getNearestAbstractImage %}<div class="previewThumbnail"><img src={{ StructureNode.getNearestAbstractImage.getImageURL }} class="img-rounded" alt="" /></div>
 				<div class="previewParagraphWImage">{{ StructureNode.getNearestAbstractParagraph }}</div>
 				{% else %}<div class="previewParagraph">{{ StructureNode.getNearestAbstractParagraph }}</div>{% endif %}
 				<button type="button" class="btn btn-comment homeCommentPosition" id="{{ StructureNode.slug }}CommentButton">{{ StructureNode.commentCount }}</button>

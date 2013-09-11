@@ -320,10 +320,8 @@ $(document).ready(function(){
 	    	{% elif node.isTypeImage and node.isPublished == True and not node.is_root_node %}
 	    		<div class='contentContainer {{ node.slug }}'>  	
 		    		
-		    		{% if node.content_object.isLinkSource and node.isPublished == True %}
-		    			<div class='contentContainerImage {{ node.slug }}'><img src={{ node.content_object.linkSource }} alt="" /></div>
-		    		{% elif node.content_object.isLocalSource and node.isPublished == True %}
-		    			<div class='contentContainerImage {{ node.slug }}'><img src={{ node.content_object.localSource.url }} alt="" /></div> 
+		    		{% if node.isPublished == True %}
+		    			<div class='contentContainerImage {{ node.slug }}'><img src={{ node.content_object.getImageURL }} alt="" /></div>
 		    		{% endif %}
 		    		<button type="button" class="btn btn-comment articleCommentPosition" id="{{ node.slug }}CommentButton">{{ node.commentCount }}</button>
 		    		<button type="button" class="btn btn-comment articleAddCommentPosition" id="{{ node.slug }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
@@ -413,14 +411,8 @@ $(document).ready(function(){
 	        	   <p>
 	        	   {{ node.content_object.text }}</p>
 	        	</div>
-	    	{% elif node.isTypeImage and node.isComment == True %}
-	
-		    		{% if node.content_object.isLinkSource %}
-		    			<div class='contentContainerImage {{ node.slug }}'><img src={{ node.content_object.linkSource }} alt="" /></div>
-		    		{% elif node.content_object.isLocalSource %}
-		    			<div class='contentContainerImage {{ node.slug }}'><img src={{ node.content_object.localSource.url }} alt="" /></div> 
-		    		{% endif %}
-		    	
+	    	{% elif node.isTypeImage and node.isComment == True %}	    		
+		    			<div class='contentContainerImage {{ node.slug }}'><img src={{ node.content_object.getImageURL }} alt="" /></div>
 	    	{% elif node.isTypeTimelike and node.isComment == True%}
 	    		<div class='contentContainerTimelike {{ node.slug }}'> 	  
 		    		

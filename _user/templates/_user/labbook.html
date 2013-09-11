@@ -615,11 +615,7 @@ $(document).ready(function () {
 				{% if StructureNode.isTypeParagraph %}
 				<p>{{ StructureNode.content_object.text }}</p>
 				{% elif StructureNode.isTypeImage %}
-					{% if StructureNode.content_object.isLinkSource %}
-		    			<p>This is from a link.</p><div class='contentContainerImage {{ StructureNode.slug }}'><img src={{ StructureNode.content_object.linkSource }} alt="" /></div>
-		    		{% elif StructureNode.content_object.isLocalSource  %}
-		    			<p>This is local.</p> <div class='contentContainerImage {{ StructureNode.slug }}'><img src={{ StructureNode.content_object.localSource.url }} alt="" /></div> 
-		    		{% endif %}
+					<div class='contentContainerImage {{ StructureNode.slug }}'><img src={{ StructureNode.content_object.getImageURL }} alt="" /></div>
 				{% elif StructureNode.isTypeTimelike %}					 
 		    		<p>This is a Timelike.</p>
 		    		{% if StructureNode.content_object.isLinkSource%}
