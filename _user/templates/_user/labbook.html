@@ -628,13 +628,16 @@ $(document).ready(function () {
 		    			<p>This is local.</p>
 		    		{% endif %}	
 		    	{% elif StructureNode.isTypeDataset %}
-		    		<h3>Constants</h3>
+		    		{% if StructureNode.content_object.getGlobalDict.items %}
+		    		<h3>Constants</h3>		    		
 		    		<table class="table">
 		    			<thead>
-		    				<tr>		    					
-		    					{% for key, value in StructureNode.content_object.getGlobalDict.items %}
-		    						<th>{{ key }}</th>
-		    					{% endfor %}		    					
+		    				<tr>
+		    							    					
+			    					{% for key, value in StructureNode.content_object.getGlobalDict.items %}
+			    						<th>{{ key }}</th>
+			    					{% endfor %}
+		    						    					
 		    				</tr>
 		    			</thead>
 		    			<tbody>
@@ -643,8 +646,10 @@ $(document).ready(function () {
 		    						<td>{{ value }}</td>
 		    					{% endfor %}
 		    				</tr>
-		    			</tbody>			
+		    			</tbody>
+		    			{% endif %}				
 		    		</table>
+		    		{% if StructureNode.content_object.getDatasetVariableNames %}
 		    		<h3>Data Set</h3>
 		    		<table class="table">
 		    			<thead>
@@ -663,7 +668,8 @@ $(document).ready(function () {
 		    				</tr>
 		    				{% endfor %}
 		    			</tbody>	
-		    		</table>			
+		    		</table>
+		    		{% endif %}			
 				{% endif %}
 			</div>	
 		</div>	

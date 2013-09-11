@@ -241,9 +241,13 @@ class Dataset(models.Model):
         return decodedGlobalValues
     
     def getDatasetVariableNames(self):
-        decodedDataSet = json.loads(json.dumps(self.data), object_pairs_hook=collections.OrderedDict)["Data Set"][0]
-        print(decodedDataSet.keys())     
-        return decodedDataSet.keys()
+        decodedDataSet = None
+        try:
+            decodedDataSet = json.loads(json.dumps(self.data), object_pairs_hook=collections.OrderedDict)["Data Set"][0]
+            decodedDataSet = decodedDataSet.keys()
+        except :
+            pass           
+        return decodedDataSet
 
 #These are tags to organize nodes by subject type.    
 class Tag(models.Model):
@@ -291,15 +295,17 @@ def datasetFormatter(requestPOST):
     datasetVariableNameList = filter(None, requestPOST.getlist('datasetVariableName'))
     print(datasetVariableNameList)
     globalVariableDict = {}
-    for name in globalVariableNameList:
-        globalVariableDict[name] = requestPOST[name]
+    if globalVariableNameList:       
+        for name in globalVariableNameList:
+            globalVariableDict[name] = requestPOST[name]
     datasetVariableList = []
-    numElements = len(requestPOST.getlist("dataSetName_"+datasetVariableNameList[0])) - 1
-    for number in range(0, numElements):
-        tempDict = collections.OrderedDict()    
-        for name in datasetVariableNameList:           
-            tempDict[name] = requestPOST.getlist("dataSetName_"+name)[number]
-        datasetVariableList.append(tempDict)
+    if datasetVariableNameList:
+        numElements = max(len(requestPOST.getlist("dataSetName_"+datasetVariableNameList[0])) - 1, 0)
+        for number in range(0, numElements):
+            tempDict = collections.OrderedDict()    
+            for name in datasetVariableNameList:           
+                tempDict[name] = requestPOST.getlist("dataSetName_"+name)[number]
+            datasetVariableList.append(tempDict)
     finalDict = collections.OrderedDict()
     finalDict["Global Variables"] = globalVariableDict
     finalDict["Data Set"] = datasetVariableList
