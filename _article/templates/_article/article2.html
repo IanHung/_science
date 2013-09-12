@@ -8,7 +8,7 @@
 	      	
 	{% recursetree nodes %}
 		{% if node.isTypeTimelike %}
-		         var node{{ node.id }}video{{ node.content_object.id }} = Popcorn.youtube(
+		         var node{{ node.id }}video{{ node.content_object.id }} = Popcorn.smart(
 	           ".node{{ node.id }}video{{ node.content_object.id }}",
 	           "{{ node.content_object.linkSource }}" );
 	    {% endif %}{% if not node.is_leaf_node %}{{ children }}{% endif %}  

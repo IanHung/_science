@@ -13,9 +13,9 @@ $(document).ready(function () {
 	$("#updateForm").hide();
 	{% for StructureNode in labbook_list %}
 		{% if StructureNode.isTypeTimelike %}
-			var timenode{{ StructureNode.id }}video{{ StructureNode.content_object.id }} = Popcorn.youtube(
+			var timenode{{ StructureNode.id }}video{{ StructureNode.content_object.id }} = Popcorn.smart(
 	           ".node{{ StructureNode.id }}video{{ StructureNode.content_object.id }}",
-	           "{{ StructureNode.content_object.linkSource }}" );
+	           "{{ StructureNode.content_object.getTimelikeURL }}" );
 		{% endif %}
 			
 	{% endfor %}
@@ -617,12 +617,7 @@ $(document).ready(function () {
 				{% elif StructureNode.isTypeImage %}
 					<div class='contentContainerImage {{ StructureNode.slug }}'><img src={{ StructureNode.content_object.getImageURL }} alt="" /></div>
 				{% elif StructureNode.isTypeTimelike %}					 
-		    		<p>This is a Timelike.</p>
-		    		{% if StructureNode.content_object.isLinkSource%}
-		    			<p>This is from a link.</p> <div class="node{{ StructureNode.id }}video{{ StructureNode.content_object.id }} timelikeContainer" ></div>
-		    		{% elif StructureNode.content_object.isLocalSource %}
-		    			<p>This is local.</p>
-		    		{% endif %}	
+		    			 <div class="node{{ StructureNode.id }}video{{ StructureNode.content_object.id }} timelikeContainer" ></div>
 		    	{% elif StructureNode.isTypeDataset %}
 		    		{% if StructureNode.content_object.getGlobalDict.items %}
 		    		<h3>Constants</h3>		    		
