@@ -49,22 +49,22 @@ $(document).ready(function () {
 		$(".timelikeFormView").hide();
 		$(".dataFormView").hide();
 	
-		$("#text-submit").click(function(){
+		$(".btn-text").click(function(){
 			$(".textFormView").show();
 			$(".submissionMenu").hide();
 		});
-		$("#image-submit").click(function(){
+		$(".btn-picture").click(function(){
 			$(".imageFormView").show();
 			$(".submissionMenu").hide();
 		});
-		$("#timelike-submit").click(function(){
+		$(".btn-timelike").click(function(){
 			$(".timelikeFormView").show();
 			$(".submissionMenu").hide();
 		});
-		$("#data-submit").click(function(){
+		$(".btn-data").click(function(){
 			$(".dataFormView").show();
 			$(".submissionMenu").hide();
-			var newWidth = Math.max(412, dataSetColumnsCount * 140);
+			var newWidth = Math.max($(".submissionBulk").width(), dataSetColumnsCount * 140);
 			$(".submissionBulk").width( newWidth );
 		});
 		$("#textFormClose").click(function(e){
@@ -86,7 +86,7 @@ $(document).ready(function () {
 			e.preventDefault();
 			$(".submissionMenu").show();
 			$(".dataFormView").hide();
-			$(".submissionBulk").width(414);
+			$(".submissionBulk").width("auto");
 		});
 		
 		{% if textForm.is_bound %}
@@ -151,9 +151,9 @@ $(document).ready(function () {
 					$('.dataSet_point_className_'+$thisval).append('<input id="id_dataSet_variable_point_' + $thisval + '_'+ dataSetRowsCount +'" class="dataSet_pointInput_className_'+$thisval + ' datasetPointInputBox datasetRowLevel_' +i+ '" name="dataSetName_'+$this.val()  + '">');
 				}
 				$("#"+"id_dataSet_variable_name_"+$thisval).val($this.val());
-				var newWidth = Math.max(414, dataSetColumnsCount * 140);
-				var newTagWidth = Math.max(393-30, (dataSetColumnsCount *140 )- 53);
-				$("#id_dataFormTag").width(newTagWidth);
+				var newWidth = Math.max($(".submissionBulk").width(), dataSetColumnsCount * 140);
+				//var newTagWidth = Math.max($("#id_dataFormTag").width(), (dataSetColumnsCount *140 )- 53);
+				//$("#id_dataFormTag").width(newTagWidth);
 				$(".submissionBulk").width( newWidth );
 				$("#addNewVariable").val("");
 				$("#addNewVariable").focus();	
@@ -309,9 +309,10 @@ $(document).ready(function () {
 				if (confirmDelete==true){
 					$('.dataSet_className_'+$thisname).remove();
 					dataSetColumnsCount--;
-					var newWidth = Math.max(414, dataSetColumnsCount * 140);
-					var newTagWidth = Math.max(393-30, (dataSetColumnsCount *140 )- 53);
-					$("#id_dataFormTag").width(newTagWidth);
+					$(".submissionBulk").width("auto");
+					var newWidth = Math.max($(".submissionBulk").width(), dataSetColumnsCount * 140);
+					//var newTagWidth = Math.max(393-30, (dataSetColumnsCount *140 )- 53);
+					//$("#id_dataFormTag").width(newTagWidth);
 					$(".submissionBulk").width( newWidth );
 				}
 				else
@@ -394,11 +395,15 @@ $(document).ready(function () {
 		</div>	
 		<div class="submissionBulk">
 			<div class="submissionMenu">	
-				<button type="button" class="btn btn-text" id="text-submit">Text</button>
-				<button type="button" class="btn btn-picture" id="image-submit">Photo</button>
-				<button type="button" class="btn btn-timelike" id="timelike-submit">Video</button>
-				<button type="button" class="btn btn-data"id="data-submit">Data</button>
-			</div>				
+				<button type="button" class="btn btn-text d-submissionMenu" id="text-submit">&para;</button>
+				<button type="button" class="btn btn-picture d-submissionMenu" id="image-submit">Photo</button>
+				<button type="button" class="btn btn-timelike d-submissionMenu" id="timelike-submit">Video</button>
+				<button type="button" class="btn btn-data d-submissionMenu"id="data-submit">Data</button>
+				<button type="button" id="textContentButton" class="btn btn-text btn-publish-menu big m-submissionMenu" title="Add a new Paragraph">&para;</button>
+				<button type="button" id="imageContentButton" class="btn btn-picture btn-publish-menu m-submissionMenu" title="Add a new Image"><i class="icon-picture"></i></button>
+				<button type="button" id="videoContentButton" class="btn btn-timelike btn-publish-menu m-submissionMenu" title="Add a new Video"><i class="icon-film"></i></button>
+				<button type="button" id="dataContentButton" class="btn btn-data btn-publish-menu m-submissionMenu" title="Add a new Dataset"><i class="icon-bar-chart"></i></button>
+			</div>		
 			<div class="submissionForms">
 				<div class="textFormView">
 					<form id="textForm" action={% if subject_url %}{% url 'userLabbookTextForm' subject_url %}{% else %}{% url 'userLabbookTextForm' %}{% endif %} method="post">
@@ -604,11 +609,13 @@ $(document).ready(function () {
 	{% for StructureNode in labbook_list %}
 		
 		<div class="postContainer">
+			<div class="mobile"><hr></div>
 			<div class="postMeta" data-ParentID="{{ StructureNode.id }}">
 				{% ifchanged StructureNode.pubDate|date %} <h5>{{ StructureNode.pubDate|date }}</h5> {% endifchanged %}
 				<h5>{{ StructureNode.pubDate|time }}</h5>
 				<p>{{ StructureNode.title }}</p>{% if StructureNode.tag_set.all %}<p>{% for tag in StructureNode.tag_set.all %}<a href={% url 'userLabbookTag' tag.name|urlencode %}>#{{ tag.name }} </a>{% endfor %}</p>{% endif %}
-				<button class="btn btn-default heroUnitCommentButtonPosition editButton" title="Edit Title and Tags"><i class="icon-pencil"></i></button>	
+				<button class="btn btn-default heroUnitCommentButtonPosition editButton" title="Edit Title and Tags"><i class="icon-pencil"></i></button>
+					
 			</div>
 			
 			<div class="postContent">
