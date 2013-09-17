@@ -10,6 +10,8 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.http import urlquote
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 @login_required
 def userDashboard(request):
@@ -19,6 +21,27 @@ def userDashboard(request):
     
     return render(request, '_home/home2.html', {'top_article_list':top_article_list})
 
+
+@login_required
+def userArticleIndex(request):    
+    all_article_list = StructureNode.objects.filter(Q(mptt_level=0)|Q(isUpdate=True)).filter(author=request.user, isPublished=True).exclude(rating__isnull=True).order_by('-rating__rating')
+    paginator = Paginator(all_article_list, 25) # Show 25 contacts per page
+    
+    page = request.GET.get('page')
+    try:
+        top_article_list = paginator.page(page)        
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        top_article_list = paginator.page(1)
+        page = "1"
+    
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        top_article_list = paginator.page(paginator.num_pages)
+        page = paginator.num_pages
+            
+    return render(request, '_user/publishArticleMain.html', {'top_article_list':top_article_list})
+    
 @login_required
 def userComment(request):
 

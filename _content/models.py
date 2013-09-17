@@ -35,7 +35,7 @@ class StructureNode(MPTTModel):
     end = models.PositiveIntegerField(blank=True, null=True)
     isLabnote = models.BooleanField()
     isUpdate = models.BooleanField()
-    
+    isDraft = models.BooleanField()
     
     
     #These methods determine the content type of the node.

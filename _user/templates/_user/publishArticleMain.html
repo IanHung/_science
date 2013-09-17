@@ -1,0 +1,63 @@
+{% extends '_user/userBase.html' %}
+
+{% block title %}
+
+{% endblock %} 
+
+{% block content %}	
+	<div class="articlePreviewList">
+		
+			
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Status</th>
+						<th>Publish Date</th>
+						<th>Comments</th>
+						<th>Rating</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for StructureNode in top_article_list %}
+					<tr>
+						<td></td>
+						<td>{% if StructureNode.isPublished and StructureNode.isDraft %}{% endif %}</td>
+						<td>{% if StructureNode %}{% endif %}</td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					{% endfor %}	
+				</tbody>
+			
+			</table>
+	{% for StructureNode in top_article_list %}				
+			<div class="articlePreviewContainer">
+			<p><a href={% url "article" StructureNode.url %}>{{ StructureNode.title }}</a><p>
+			<p>{{ StructureNode.pubDate|date }}</p>
+				<div class="previewParagraph">{{ StructureNode.getNearestAbstractParagraph }}</div>
+			</div>
+	
+		
+	{% endfor %}
+	</div>
+	<div class="pagination">
+    <span class="step-links">
+    	{% if top_article_list.has_previous or top_article_list.has_next %}
+        {% if top_article_list.has_previous %}
+            <a href="?page={{ top_article_list.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ top_article_list.number }} of {{ top_article_list.paginator.num_pages }}.
+        </span>
+
+        {% if top_article_list.has_next %}
+            <a href="?page={{ top_article_list.next_page_number }}">next</a>
+        {% endif %}
+        {% endif %}
+    </span>
+</div>	
+{% endblock %}
