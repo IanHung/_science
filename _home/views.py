@@ -43,4 +43,4 @@ def about(request):
     return render(request, '_home/about.html')
 
 def contact(request):
-    return render(request, '_home/about.html')
+    return render(request, '_home/contact.html')

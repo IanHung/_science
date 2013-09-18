@@ -2,8 +2,7 @@
 	<ul class="nav nav-pills nav-stacked">
 		<li><a href={% url 'userLabbook' %}>Labbook</a></li>
 		<li><a href={% url 'userDashboard' %}>Dash Board</a></li>
-		<li><a href={% url 'userPublish' %}>Publish Article</a></li>
-		<li><a href="#">Manage Articles</a></li>
+		<li><a href={% url 'userArticleIndex' %}>Manage Articles</a></li>
 		<li><a href="#">Manage Comments</a></li>
 		<li><a>Manage Datasets</a></li>
 		<li><form id="id_userSeachSideMenu" class="form-inline" method="post" action={% url "userSearchForm" %}>

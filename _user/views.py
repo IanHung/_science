@@ -24,7 +24,7 @@ def userDashboard(request):
 
 @login_required
 def userArticleIndex(request):    
-    all_article_list = StructureNode.objects.filter(Q(mptt_level=0)|Q(isUpdate=True)).filter(author=request.user, isPublished=True).exclude(rating__isnull=True).order_by('-rating__rating')
+    all_article_list = StructureNode.objects.filter(Q(mptt_level=0)|Q(isUpdate=True)).filter(author=request.user, isPublished=True).exclude(rating__isnull=True).order_by('-pubDate')
     paginator = Paginator(all_article_list, 25) # Show 25 contacts per page
     
     page = request.GET.get('page')
@@ -41,6 +41,13 @@ def userArticleIndex(request):
         page = paginator.num_pages
             
     return render(request, '_user/publishArticleMain.html', {'top_article_list':top_article_list})
+
+@login_required
+def userArticleDelete(request):
+    if (request.method == 'POST'):
+        nodeToDelete = StructureNode.objects.get(id = int(request.POST['nodeID']))
+        nodeToDelete.delete()
+    return HttpResponseRedirect(reverse('userArticleIndex'))
     
 @login_required
 def userComment(request):

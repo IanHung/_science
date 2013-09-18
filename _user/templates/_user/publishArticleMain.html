@@ -6,42 +6,40 @@
 
 {% block content %}	
 	<div class="articlePreviewList">
-		
-			
+			<div class="row">
+				<div class="col-xs-6">
+					<h2>Articles</h2>
+				</div>
+				<div class="col-xs-6">
+					<a class="btn btn-default btn-new pull-right" href={% url "userPublish" %} title="New Article">New</a>
+				</div>
+			</div>
 			<table class="table table-striped">
 				<thead>
 					<tr>
 						<th>Title</th>
 						<th>Status</th>
 						<th>Publish Date</th>
-						<th>Comments</th>
-						<th>Rating</th>
+						<th class="desktop">Comments</th>
+						<th class="desktop">Rating</th>
 						<th>Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for StructureNode in top_article_list %}
 					<tr>
-						<td></td>
-						<td>{% if StructureNode.isPublished and StructureNode.isDraft %}{% endif %}</td>
-						<td>{% if StructureNode %}{% endif %}</td>
-						<td></td>
-						<td></td>
-						<td></td>
+						<td>{{ StructureNode.title }}</td>
+						<td>{% if StructureNode.isPublished and StructureNode.isDraft %}Draft{% else %}Published{% endif %}</td>
+						<td>{% if StructureNode.isPublished and not StructureNode.isDraft %}{{StructureNode.pubDate }}{% endif %}</td>
+						<td class="desktop">{{ StructureNode.commentCount }}</td>
+						<td class="desktop">{{ StructureNode.rating.rating }}</td>
+						<td><a class="btn btn-default btn-new" href={% url "userPublish" %} title="Edit Article"><i class="icon-pencil"></i></a><form class="deleteArticle" method="post" enctype="multipart/form-data" action={% url 'userArticleDelete' %} title="Delete Article">{% csrf_token %}<button class="btn btn-default btn-new" href={% url "userPublish" %}><i class="icon-remove"></i></button><div class="hiddenFields"><input type="hidden" name="nodeID" value='{{ StructureNode.id }}'></div></form></td>
 					</tr>
 					{% endfor %}	
 				</tbody>
 			
 			</table>
-	{% for StructureNode in top_article_list %}				
-			<div class="articlePreviewContainer">
-			<p><a href={% url "article" StructureNode.url %}>{{ StructureNode.title }}</a><p>
-			<p>{{ StructureNode.pubDate|date }}</p>
-				<div class="previewParagraph">{{ StructureNode.getNearestAbstractParagraph }}</div>
-			</div>
 	
-		
-	{% endfor %}
 	</div>
 	<div class="pagination">
     <span class="step-links">
