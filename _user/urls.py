@@ -26,5 +26,6 @@ urlpatterns = patterns('',
                        url(r'^article/new/$', views.userPublish, name='userPublish'),
                        url(r'^article/$', views.userArticleIndex, name='userArticleIndex'),
                        url(r'^article/delete/$', views.userArticleDelete, name='userArticleDelete'),
+                       url(r'^article/edit/(?P<article_url>[^/]+)/$', views.userArticleEdit, name='userArticleEdit'),
                        url(r'^labbook/submit/updateform/$', views.userLabbookUpdateForm, name='userLabbookUpdateForm'),
                       )

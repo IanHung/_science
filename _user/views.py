@@ -3,15 +3,17 @@
 
 from django.shortcuts import render
 from _content.models import StructureNode, get_queryset_descendants, Paragraph, hashTagParser, tagSaveHelper, Image, Timelike, Dataset, datasetFormatter
+from _content.forms import ImageForm, ParagraphForm, TimelikeForm, StructureNodeTitleForm
 from _user.forms import ParagraphFormLabbook, ImageFormLabbook, TimelikeFormLabbook, DataFormLabbook, PublishForm, UpdateFormLabbook
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.http import urlquote
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.forms import model_to_dict
 
 @login_required
 def userDashboard(request):
@@ -21,6 +23,38 @@ def userDashboard(request):
     
     return render(request, '_home/home2.html', {'top_article_list':top_article_list})
 
+
+@login_required
+def userArticleEdit(request, article_url):
+    publishForm = PublishForm()
+    print(article_url)
+    #creating a tree with ancestors and descendants of a node.
+    try:
+        nodeItem = StructureNode.objects.get(url = article_url, author=request.user)
+        descList = nodeItem.get_descendants(include_self=True)
+        ancestorList = nodeItem.get_ancestors()
+        #concatenating lists
+        tree_list = ancestorList | descList
+        tree_list = tree_list.filter(mptt_level__lte=2)
+        root = tree_list.get(mptt_level=0)
+        rootTag = "" 
+        if root.tag_set.all():
+            for tag in root.tag_set.all():
+                rootTag = rootTag + " #" + tag.name
+        publishFormData = {'publishFormTitle': root.title, 'publishFormTag': rootTag}
+        publishForm = PublishForm(publishFormData)
+        if request.user.is_authenticated():
+            labbook_imageNode_list = StructureNode.objects.filter(isLabnote = True, author=request.user, content_type__model='image') #when filtering model must be lower case.
+            labbook_timelikeNode_list = StructureNode.objects.filter(isLabnote = True, author=request.user, content_type__model='timelike')
+            labbook_dataNode_list = StructureNode.objects.filter(isLabnote = True, author=request.user, content_type__model='dataset')
+        else:
+            labbook_imageNode_list = None
+            labbook_timelikeNode_list = None
+            labbook_dataNode_list = None
+    except StructureNode.DoesNotExist:
+        raise Http404
+    
+    return render(request, '_user/publishArticleEdit.html', {'nodes':tree_list, 'publishForm':publishForm, 'labbook_imageNode_list': labbook_imageNode_list, 'labbook_timelikeNode_list': labbook_timelikeNode_list, 'labbook_dataNode_list': labbook_dataNode_list, })
 
 @login_required
 def userArticleIndex(request):    
@@ -45,7 +79,7 @@ def userArticleIndex(request):
 @login_required
 def userArticleDelete(request):
     if (request.method == 'POST'):
-        nodeToDelete = StructureNode.objects.get(id = int(request.POST['nodeID']))
+        nodeToDelete = StructureNode.objects.get(id = int(request.POST['nodeID']), author = request.user)
         nodeToDelete.delete()
     return HttpResponseRedirect(reverse('userArticleIndex'))
     
@@ -75,70 +109,86 @@ def userPublish(request):
             tagList = hashTagParser(publishForm.cleaned_data['publishFormTag'])
             restrictedTagListSave(request, experimentNode, tagList) 
             for sectionNodeIndex in range(0, int(request.POST['numberOfSections'])):
-                sectionNode = StructureNode()
-                sectionNode.title = request.POST['section_title_'+str(sectionNodeIndex)]
-                sectionNode.parent = experimentNode
-                sectionNode.author = request.user
-                sectionNode.isPublished = True
-                sectionNode.position = sectionNodeIndex + 1
-                sectionNode.save()
-                restrictedTagListSave(request, sectionNode, tagList) 
+                tempSectionData = {'title': request.POST['section_title_'+str(sectionNodeIndex)]}
+                sectionNodeForm = StructureNodeTitleForm(tempSectionData)
+                if sectionNodeForm.is_valid():
+                    sectionNode = sectionNodeForm.save(commit=False)
+                    sectionNode.parent = experimentNode
+                    sectionNode.author = request.user
+                    sectionNode.isPublished = True
+                    sectionNode.position = sectionNodeIndex + 1
+                    sectionNode.save()
+                    restrictedTagListSave(request, sectionNode, tagList) 
                 for contentNodeIndex in range(0, int(request.POST['numberOfContentSections_'+str(sectionNodeIndex)])):
-                    contentNode = StructureNode()
-                    contentNode.title = request.POST['section_title_'+str(sectionNodeIndex)] +"_content_"+str(contentNodeIndex)
-                    contentNode.parent = sectionNode
-                    contentNode.author = request.user
-                    contentNode.isPublished = True
-                    contentNode.position = contentNodeIndex +1
-                    if (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "textContent"):
-                        tempParagraph = Paragraph()
-                        tempParagraph.text = request.POST['text_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
-                        tempParagraph.save()
-                        contentNode.content_type = ContentType.objects.get_for_model(Paragraph)
-                        contentNode.object_id = tempParagraph.id                        
-                        contentNode.save()
-                    elif (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "imageContent"):
-                        contentNode.content_type = ContentType.objects.get_for_model(Image)
-                        if (request.POST.get('imageInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
-                            tempImage = Image()
-                            tempImage.linkSource = request.POST['imageInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
-                            tempImage.save()
-                            contentNode.object_id = tempImage.id
-                            print("first")
-                        elif (request.FILES.get('imageInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
-                            tempImage = Image()
-                            tempImage.localSource = request.FILES['imageInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
-                            tempImage.save()
-                            contentNode.object_id = tempImage.id
-                            print("second")
-                        elif (request.POST.get('imageInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
-                            contentNode.object_id = int(request.POST['imageInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)])
-                            print("third")
-                        contentNode.save()
-                    elif (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "timelikeContent"):
-                        contentNode.content_type = ContentType.objects.get_for_model(Timelike)
-                        if (request.POST.get('timelikeInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
-                            tempTimelike = Timelike()
-                            tempTimelike.linkSource = request.POST['timelikeInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
-                            tempTimelike.save()
-                            contentNode.object_id = tempTimelike.id
-                            print("first")
-                        elif (request.FILES.get('timelikeInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
-                            tempTimelike = Timelike()
-                            tempTimelike.localSource = request.FILES['timelikeInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
-                            tempTimelike.save()
-                            contentNode.object_id = tempTimelike.id
-                            print("second")
-                        elif (request.POST.get('timelikeInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
-                            contentNode.object_id = int(request.POST['timelikeInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)])
-                            print("third")
-                        contentNode.save()
-                    elif (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "dataContent"):
-                        contentNode.content_type = ContentType.objects.get_for_model(Dataset)
-                        if (request.POST.get('dataInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
-                            contentNode.object_id = int(request.POST['dataInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)])
-                        contentNode.save()
-                    restrictedTagListSave(request, contentNode, tagList) 
+                    tempContentNodeData = {'title': request.POST['section_title_'+str(sectionNodeIndex)] +"_content_"+str(contentNodeIndex)}
+                    sectionNodeForm = StructureNodeTitleForm(tempContentNodeData)
+                    if sectionNodeForm.is_valid():
+                        contentNode = sectionNodeForm.save(commit=False)
+                        contentNode.parent = sectionNode
+                        contentNode.author = request.user
+                        contentNode.isPublished = True
+                        contentNode.position = contentNodeIndex +1
+                        if (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "textContent"):
+                            tempParagraph = Paragraph()
+                            tempParagraph.text = request.POST['text_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
+                            tempParagraphDict = model_to_dict(tempParagraph)
+                            paragraphForm = ParagraphForm(tempParagraphDict)
+                            if paragraphForm.is_valid():
+                                tempParagraph = paragraphForm.save()
+                            contentNode.content_type = ContentType.objects.get_for_model(Paragraph)
+                            contentNode.object_id = tempParagraph.id                        
+                            contentNode.save()
+                        elif (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "imageContent"):
+                            contentNode.content_type = ContentType.objects.get_for_model(Image)
+                            if (request.POST.get('imageInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                tempImage = Image()
+                                tempImage.linkSource = request.POST['imageInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
+                                tempImageDict=model_to_dict(tempImage)
+                                imageForm = ImageForm(tempImageDict)
+                                if imageForm.is_valid():
+                                    tempImage = imageForm.save()
+                                    print("working")
+                                else:
+                                    print("notworking")
+                                contentNode.object_id = tempImage.id
+                                
+                            elif (request.FILES.get('imageInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                tempImage = Image()
+                                tempImage.localSource = request.FILES['imageInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
+                                tempImage.save()
+                                contentNode.object_id = tempImage.id
+                                
+                            elif (request.POST.get('imageInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                contentNode.object_id = int(request.POST['imageInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)])
+                                
+                            contentNode.save()
+                        elif (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "timelikeContent"):
+                            contentNode.content_type = ContentType.objects.get_for_model(Timelike)
+                            if (request.POST.get('timelikeInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                tempTimelike = Timelike()
+                                tempTimelike.linkSource = request.POST['timelikeInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
+                                tempTimelikeDict = model_to_dict(tempTimelike)
+                                timelikeForm = TimelikeForm(tempTimelikeDict)
+                                if timelikeForm.is_valid():
+                                    tempTimelike = timelikeForm.save()
+                                contentNode.object_id = tempTimelike.id
+                                
+                            elif (request.FILES.get('timelikeInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                tempTimelike = Timelike()
+                                tempTimelike.localSource = request.FILES['timelikeInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
+                                tempTimelike.save()
+                                contentNode.object_id = tempTimelike.id
+                                
+                            elif (request.POST.get('timelikeInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                contentNode.object_id = int(request.POST['timelikeInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)])
+                                
+                            contentNode.save()
+                        elif (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "dataContent"):
+                            contentNode.content_type = ContentType.objects.get_for_model(Dataset)
+                            if (request.POST.get('dataInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                contentNode.object_id = int(request.POST['dataInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)])
+                            contentNode.save()
+                        restrictedTagListSave(request, contentNode, tagList) 
                         
     return render(request, '_user/publish.html', {'publishForm':publishForm, 'labbook_imageNode_list': labbook_imageNode_list, 'labbook_timelikeNode_list': labbook_timelikeNode_list, 'labbook_dataNode_list': labbook_dataNode_list, })
 
@@ -165,7 +215,7 @@ def userLabbookTextForm(request, subject_url=None):
         text_form = ParagraphFormLabbook(request.POST)
         update_form = UpdateFormLabbook()
         if textFormLabbookSave(request):
-            return HttpResponseRedirect('/user/labbook/')
+            return HttpResponseRedirect(reverse('userLabbook'))
         else:
             if (subject_url):            
                 labbook_list = subjectURLqueryList(request.user,subject_url)
@@ -187,7 +237,7 @@ def userLabbookUpdateForm(request, subject_url=None):
             changedNode.tag_set.clear()
             tagList = hashTagParser(update_form.cleaned_data['updateFormTag'])
             restrictedTagListSave(request, changedNode, tagList) 
-            return HttpResponseRedirect('/user/labbook/')
+            return HttpResponseRedirect(reverse('userLabbook'))
         else:
             if (subject_url):
                             
@@ -206,7 +256,7 @@ def userLabbookImageForm(request, subject_url=None):
         data_form = DataFormLabbook()
         update_form = UpdateFormLabbook()
         if imageFormLabbookSave(request):
-            return HttpResponseRedirect('/user/labbook/')
+            return HttpResponseRedirect(reverse('userLabbook'))
         else:
             if (subject_url):            
                 labbook_list = subjectURLqueryList(request.user,subject_url)
@@ -223,7 +273,7 @@ def userLabbookTimelikeForm(request, subject_url=None):
         data_form = DataFormLabbook(request)
         update_form = UpdateFormLabbook()
         if timelikeFormLabbookSave(request):
-            return HttpResponseRedirect('/user/labbook/')
+            return HttpResponseRedirect(reverse('userLabbook'))
         else:
             if (subject_url):            
                 labbook_list = subjectURLqueryList(request.user,subject_url)
@@ -242,7 +292,7 @@ def userLabbookDataForm(request, subject_url=None):
         data_form = DataFormLabbook(request.POST)
         update_form = UpdateFormLabbook()
         if dataFormLabbookSave(request):
-            return HttpResponseRedirect('/user/labbook/')
+            return HttpResponseRedirect(reverse('userLabbook'))
         else:
             if (subject_url):            
                 labbook_list = subjectURLqueryList(request.user,subject_url)

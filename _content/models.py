@@ -125,6 +125,10 @@ class StructureNode(MPTTModel):
         number = self.get_descendants().filter(content_type=None, isComment=True).count()
         return number
     
+    def childrenCOunt(self):
+        number = self.get_children().count()
+        return number
+    
     class Meta:
         unique_together = ('parent', 'position')
         

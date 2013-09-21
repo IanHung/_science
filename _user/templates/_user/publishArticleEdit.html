@@ -1,0 +1,330 @@
+{% extends '_user/userBase.html' %}
+
+{% block title %}
+{{ user.username }} | Publish
+{% endblock %}
+
+{% block head %}
+<script>
+$(document).ready(function () {
+	var sectionCounter = 1;
+	var $focusedEmptyContainer;
+
+	
+	//positionNewSectionButton();
+	function nameSetterFunction(contentInputContainer, thisSectionPosition, thisSectionContentCounter){
+		var $child = $(contentInputContainer).children();
+		if ($child.hasClass("textSubmission")){
+			var $thisTextarea = $child.find("textarea");
+			var newName = "text_section_content_"+thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisTextarea.attr("name", newName);
+			var $thisContentType = $child.find(".contentType");
+			var contentTypeName = "contentType_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisContentType.attr("name", contentTypeName);
+		}
+		else if($child.hasClass("imageSubmission")){
+			var $thisContentType = $child.find(".contentType");
+			var contentTypeName = "contentType_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisContentType.attr("name", contentTypeName);
+			var $thisLocalSubmit = $child.find(".imageInputLocalSource");
+			var localSubmitNewName = "imageInputLocalSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLocalSubmit.attr("name", localSubmitNewName);
+			var $thisLinkSubmit = $child.find(".imageInputLinkSource");
+			var linkSubmitNewName = "imageInputLinkSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLinkSubmit.attr("name", linkSubmitNewName);
+			var $thisLabbookSubmit = $child.find(".imageInputLabbookSource");
+			var labbookSubmitNewName = "imageInputLabbookSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLabbookSubmit.attr("name", labbookSubmitNewName );
+		}
+		else if($child.hasClass("timelikeSubmission")){
+			var $thisContentType = $child.find(".contentType");
+			var contentTypeName = "contentType_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisContentType.attr("name", contentTypeName);
+			var $thisLocalSubmit = $child.find(".timelikeInputLocalSource");
+			var localSubmitNewName = "timelikeInputLocalSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLocalSubmit.attr("name", localSubmitNewName);
+			var $thisLinkSubmit = $child.find(".timelikeInputLinkSource");
+			var linkSubmitNewName = "timelikeInputLinkSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLinkSubmit.attr("name", linkSubmitNewName);
+			var $thisLabbookSubmit = $child.find(".timelikeInputLabbookSource");
+			var labbookSubmitNewName = "timelikeInputLabbookSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLabbookSubmit.attr("name", labbookSubmitNewName );
+		}
+		else if($child.hasClass("dataSubmission")){
+			var $thisContentType = $child.find(".contentType");
+			var contentTypeName = "contentType_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisContentType.attr("name", contentTypeName);
+			var $thisLabbookSubmit = $child.find(".dataInputLabbookSource");
+			var labbookSubmitNewName = "dataInputLabbookSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLabbookSubmit.attr("name", labbookSubmitNewName );
+		}
+		
+	}
+	
+	//Sets up the buttons for images
+	$("#publishForm").on("click", ".btn-upload", function(){
+		var $thisParent = $(this).parents(".contentInputContainer");
+		$thisParent.find(".localSourceSubmission").show();
+		$thisParent.find(".linkSourceSubmission").hide();
+		$thisParent.find(".labbookSourceSubmission").hide();
+		$thisParent.find(".inputLinkSource").val("");
+		var $thisAlsoNeedsReset = $thisParent.find(".inputLabbookSource");
+		$thisAlsoNeedsReset.prop('selectedIndex',0);
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+	});
+	
+	$("#publishForm").on("click", ".btn-link", function(){
+		var $thisParent = $(this).parents(".contentInputContainer");
+		$thisParent.find(".localSourceSubmission").hide();
+		$thisParent.find(".linkSourceSubmission").show();
+		$thisParent.find(".labbookSourceSubmission").hide();
+		var $thisNeedsReset = $thisParent.find(".inputLocalSource");
+		$thisNeedsReset.replaceWith( $thisNeedsReset = $thisNeedsReset.clone(true) );
+		var $thisAlsoNeedsReset = $thisParent.find(".inputLabbookSource");
+		$thisAlsoNeedsReset.prop('selectedIndex',0);
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+	});
+	
+	$("#publishForm").on("click", ".btn-labbook", function(){
+		var $thisParent = $(this).parents(".contentInputContainer");
+		$thisParent.find(".localSourceSubmission").hide();
+		$thisParent.find(".linkSourceSubmission").hide();
+		$thisParent.find(".labbookSourceSubmission").show();
+		var $thisNeedsReset = $thisParent.find(".inputLocalSource");
+		$thisNeedsReset.replaceWith( $thisNeedsReset = $thisNeedsReset.clone(true) );
+		$thisParent.find(".inputLinkSource").val("");
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+	});
+	
+	//sets up dataset buttons
+	$("#publishForm").on("click", ".btn-labbook-data", function(){
+		var $thisParent = $(this).parents(".contentInputContainer");
+		$thisParent.find(".manualSubmission").hide();
+		$thisParent.find(".labbookSourceSubmission").show();
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+	});
+	
+	$("#publishForm").on("click", ".btn-manual-data", function(){
+		var $thisParent = $(this).parents(".contentInputContainer");
+		$thisParent.find(".manualSubmission").show();
+		$thisParent.find(".labbookSourceSubmission").hide();
+		var $thisNeedsReset = $thisParent.find(".inputLabbookSource");
+		$thisNeedsReset.prop('selectedIndex',0);
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+	});
+	
+	//Hides the pulbish form helper menu.
+	$(".publishFormHelperMenu").hide();
+	//A function to bind the helper menu.
+	{% include '_user/helperMenuFunction.js' %}
+	//Add New Section
+	$("#addNewSection").on('click', function(){
+		var $this = $(this);
+		$(".sectionSubmission").last().after('<div class="sectionSubmission"><div class="sectionTitleSubmission input-group"><input class="sectionTitleInput form-control" name="section_title_'+ sectionCounter +'" type="text" placeholder="Section Title"><span class="input-group-btn"><button type="button" class="btn btn-publish-deleteSection">Delete This Section</button></span></div><div class="emptyContentContainer">Click to Add Content Here</div><div class="hiddenFields""><input type="hidden" class="class_numberOfContentSections" id="id_numberOfContentSections_'+ sectionCounter +'" name="numberOfContentSections_'+ sectionCounter +'" value=0><input type="hidden" class="class_sectionPosition" name="sectionPosition" value='+ sectionCounter +'></div></div>');
+		sectionCounter++;
+		
+		
+		$("#input_numberOfSections").val(sectionCounter);
+		//positionNewSectionButton();
+				
+	});
+	
+	//positions and binds the helper form
+	$("#publishForm").on('click', '.emptyContentContainer', function(){
+		if ($focusedEmptyContainer != null){
+			if ($focusedEmptyContainer.is($(this))){
+				$(".publishFormHelperMenu").toggle();
+			}
+			else {
+				$focusedEmptyContainer = $(this);
+				$focusedEmptyContainer.after($(".publishFormHelperMenu"));
+				
+				
+				$(".publishFormHelperMenu").unbind();
+				helperMenuFunction($focusedEmptyContainer);
+				$(".publishFormHelperMenu").show();
+			}
+		}	
+		else {
+			$focusedEmptyContainer = $(this);
+			$focusedEmptyContainer.after($(".publishFormHelperMenu"));
+			
+			
+			$(".publishFormHelperMenu").unbind();
+			helperMenuFunction($focusedEmptyContainer);
+			$(".publishFormHelperMenu").show();
+		}
+	 });
+	
+	//moves a content section up if possible.
+	$("#publishForm").on('click', '.btn-move-up', function(){
+		var $thisParent = $(this).parents('.contentInputContainer');
+		
+		if ($thisParent.prevAll('.contentInputContainer').length > 0){
+			
+			var $prevContent = $thisParent.prevAll('.contentInputContainer').first();
+			
+			$prevContent.before($thisParent);
+			$prevContent.next().after($prevContent);
+			var thisSectionPosition = $thisParent.parents(".sectionSubmission").find(".class_sectionPosition").val();
+			var thisSectionContentCounter = 0;
+			$thisParent.parents(".sectionSubmission").find(".contentInputContainer").each(function(){
+				nameSetterFunction(this, thisSectionPosition, thisSectionContentCounter);
+				thisSectionContentCounter++;
+			});
+			//positionNewSectionButton();
+			//positionPublishFormHelperMenu();
+			//$(".publishFormHelperMenu").hide();
+			$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter);
+			
+		}
+	});
+	
+	//moves a content section down if possible.
+	$("#publishForm").on('click', '.btn-move-down', function(){
+		var $thisParent = $(this).parents('.contentInputContainer');
+		
+		if ($thisParent.nextAll('.contentInputContainer').length > 0){
+			
+			var $nextContent = $thisParent.nextAll('.contentInputContainer').first();
+			
+			$nextContent.after($thisParent);
+			$nextContent.prev().before($nextContent);
+			var thisSectionPosition = $thisParent.parents(".sectionSubmission").find(".class_sectionPosition").val();
+			var thisSectionContentCounter = 0;
+			$thisParent.parents(".sectionSubmission").find(".contentInputContainer").each(function(){
+				nameSetterFunction(this, thisSectionPosition, thisSectionContentCounter);
+				thisSectionContentCounter++;
+			});
+			//positionNewSectionButton();
+			//positionPublishFormHelperMenu();
+			//$(".publishFormHelperMenu").hide();
+			$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter);
+			
+		}
+	});
+
+	//moves a content section down if possible.
+	$("#publishForm").on('click', '.btn-delete', function(){
+		var $thisParent = $(this).parents('.contentInputContainer');
+		
+		if ($thisParent.next().is($focusedEmptyContainer)){
+			$thisParent.prev().remove();	
+		} 
+		else {
+			$thisParent.next().remove();
+		}
+		
+		var thisSectionPosition = $thisParent.parents(".sectionSubmission").find(".class_sectionPosition").val();
+		var thisSectionContentCounter = 0;
+		$thisParent.parents(".sectionSubmission").find(".contentInputContainer").each(function(){
+			if(!$(this).is($thisParent)){
+			nameSetterFunction(this, thisSectionPosition, thisSectionContentCounter);
+			thisSectionContentCounter++;
+			}
+			
+		});
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+		//$(".publishFormHelperMenu").hide();
+		$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter);
+		
+		$thisParent.remove();	
+		
+	});
+	
+	//Deletes a section and renames remaining sections.
+	$('#publishForm').on('click','.btn-publish-deleteSection',function(){
+		if (sectionCounter > 1){
+			if ($(this).parents(".sectionSubmission").find(".publishFormHelperMenu").length > 0){
+				$(".publishFormContainer").after($(".publishFormHelperMenu"));
+				$(".publishFormHelperMenu").unbind().hide();
+			}
+			$(this).parents(".sectionSubmission").remove();
+			
+			var thisSectionPosition = 0;
+			$(".sectionSubmission").each(function(){
+				var $this = $(this);
+				var newTitleInputName = "section_title_" + thisSectionPosition;
+				$this.find(".sectionTitleInput").attr("name", newTitleInputName);
+				$this.find(".class_sectionPosition").val(thisSectionPosition);
+				var thisSectionContentCounter = 0;
+				$this.find(".contentInputContainer").each(function(){
+					nameSetterFunction(this, thisSectionPosition, thisSectionContentCounter);
+					thisSectionContentCounter++;
+				});
+				var newNumberOfContentSectionsName = "numberOfContentSections_" + thisSectionPosition;
+				$this.find(".class_numberOfContentSections").attr("name", newNumberOfContentSectionsName).val(thisSectionContentCounter);
+				thisSectionPosition++;
+			});
+			
+			sectionCounter--;
+			
+			
+			$("#input_numberOfSections").val(sectionCounter);
+		}
+	});			
+	
+});
+</script>	
+{% endblock %}
+
+
+{% block content %}
+<div class="publishFormContainer">
+
+	<div class="publishFormSubmission">
+	<div class="publishFormMenuContainer">
+		<div class="publishFormHelperMenu">
+			<button type="button" id="textContentButton" class="btn btn-text btn-publish-menu big" title="Add a new Paragraph">&para;</button>
+			<button type="button" id="imageContentButton" class="btn btn-picture btn-publish-menu" title="Add a new Image"><i class="icon-picture"></i></button>
+			<button type="button" id="videoContentButton" class="btn btn-timelike btn-publish-menu" title="Add a new Video"><i class="icon-film"></i></button>
+			<button type="button" id="dataContentButton" class="btn btn-data btn-publish-menu" title="Add a new Dataset"><i class="icon-bar-chart"></i></button>
+		</div>
+	</div>
+		<form id="publishForm" action="" method="post" enctype="multipart/form-data">
+			{% csrf_token %}{{ publishForm.non_field.errors }}
+			<div class="titleSubmission">
+				{{ publishForm.publishFormTitle.errors }}
+				<div class="titleInputContainer">
+					{{ publishForm.publishFormTitle }}
+				</div>
+			</div>
+			<div class="tagSubmission">	
+				{{ publishForm.publishFormTag.errors }}
+				<div class="tagInputContainer">
+					<div class="input-prepend">
+						<span class="add-on"><i class="icon-tags"></i></span>
+						{{ publishForm.publishFormTag }}
+					</div>
+				</div>
+			</div>
+			<div class="sectionSubmission">
+				<div class="sectionTitleSubmission input-group">
+					<input class="sectionTitleInput form-control" name="section_title_0" type="text" placeholder="Section Title"><span class="input-group-btn"><button type="button" class="btn btn-publish-deleteSection">Delete This Section</button></span>
+				</div>
+				<div class="emptyContentContainer">Click to Add Content Here</div>
+				<div class="hiddenFields">
+					<input type="hidden" class="class_numberOfContentSections" id="id_numberOfContentSections_0" name="numberOfContentSections_0" value=0>
+					<input type="hidden" class="class_sectionPosition" name="sectionPosition" value=0>
+				</div>
+			</div>
+			<div class="hiddenFields">
+				<input id="input_numberOfSections" type="hidden" name="numberOfSections" value=1 >
+			</div>
+			<button id="publishFormButton" type="submit" class="btn btn-primary">Submit</button>
+			<button type="button" class="btn btn-primary btn-publish-newSection pull-right" id="addNewSection">Add New Section</button>	
+		</form>		
+	</div>
+		
+</div>
+
+{% endblock %}
+
+
+
