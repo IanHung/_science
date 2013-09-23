@@ -357,21 +357,61 @@ $(document).ready(function () {
 									<div class="selectSource">
 										<button type="button" class="btn btn-upload">From File</button>
 										<button type="button" class="btn btn-link">From a URL</button>
-										<button type="button" class="btn btn-labbook">From Labbook</button>
+										{% if labbook_imageNode_list %}<button type="button" class="btn btn-labbook">From Labbook</button>{% endif %}
 									</div>
 								</div>
-								<div class="localSourceSubmission">
-									<div class="localSourceInputContainer">
+								<div class="localSourceSubmission" {% if not node.content_object.isLocalSource %}style="display: none;"{% endif %}>
+									<div class="localSourceInputContainer" >
+										{% if node.content_object.isLocalSource %}<p>Currently: <a href={{ node.content_object.localSource.url }}>{{ node.content_object.localSource.name }}</a></p>{% endif %}
 										<input class="imageInputLocalSource inputLocalSource" type="file" name="imageInputLocalSource_section_content_{{ node.parent.position }}_{{ node.position }}">
 									</div>
 								</div>
-							
+								<div class="linkSourceSubmission" {% if not node.content_object.isLinkSource %}style="display: none;"{% endif %}>
+									<div class="linkSourceInputContainer">
+										<input id="id_imageFormLinkSource" class="imageInputLinkSource inputLinkSource" placeholder="Enter URL of image." type="text" value="{{ node.content_object.linkSource }}" />
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 					<div class="emptyContentContainer">Click to Add Content Here</div>						
 				{% endif %}
 			{% endrecursetree %}
+			
+			
+<!--
+			<div class="contentInputContainer">
+				<div class="imageSubmission">
+					<div class="imageInputContainer">
+						<div class="variableHeader">
+							<h3>Insert Image</h3>
+							<div class="selectSource">
+								<button type="button" class="btn btn-upload">From File</button>
+								<button type="button" class="btn btn-link">From a URL</button>
+								{% if labbook_imageNode_list %}<button type="button" class="btn btn-labbook">From Labbook</button>{% endif %}
+							</div>
+						</div>
+						<div class="localSourceSubmission">
+							<div class="localSourceInputContainer">
+								<input class="imageInputLocalSource inputLocalSource" id="id_imageFormLocalSource" type="file" />
+								</div>
+								</div>
+								<div class="linkSourceSubmission">
+									<div class="linkSourceInputContainer">
+										<input id="id_imageFormLinkSource" class="imageInputLinkSource inputLinkSource" placeholder="Enter URL of image." type="text" />
+										</div>
+										</div>
+										{% if labbook_imageNode_list %}<div class="labbookSourceSubmission"><div class="labbookSourceInputContainer"><select class="imageInputLabbookSource inputLabbookSource" id="id_imageFormLabbookSource" ><option value="" selected="selected">---------</option>{% for imageNode in labbook_imageNode_list %}<option value="{{ imageNode.object_id }}">{{ imageNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
+										</div>
+										<div class="hiddenfield">
+											<input type="hidden" class="contentType" value="imageContent">
+										</div>
+									</div>
+								<div class="edittingButtonsContainer">
+							<button type="button" class="btn btn-move-up"><i class="icon-arrow-up"></i></button><button type="button" class="btn btn-move-down"><i class="icon-arrow-down"></i></button><button type="button" class="btn btn-delete"><i class="icon-remove"></i></button></div></div>
+			-->
+
+			
 
 			<button id="publishFormButton" type="submit" class="btn btn-primary">Submit</button>
 			<button type="button" class="btn btn-primary btn-publish-newSection pull-right" id="addNewSection">Add New Section</button>	

@@ -110,6 +110,10 @@ class StructureNode(MPTTModel):
             self.url = '%s/%s' % (self.parent.url, self.slug)
         else:
             self.url = self.slug
+            
+        if self.content_type:
+            if not self.content_object.originalStructureNode:
+                self.content_object.originalStructureNode_id = self.id
         super(StructureNode, self).save()
         
     #slug produces invalid javascript variables
@@ -153,7 +157,7 @@ class ViewCount(models.Model):
 class Paragraph(models.Model):
     structureNode = generic.GenericRelation(StructureNode)
     text = models.TextField()
-    
+    originalStructureNode = TreeForeignKey(StructureNode, null=True, blank=True, related_name="original_paragraph_content")
     
     def __unicode__(self):
         if self.structureNode.order_by('pubDate').exists() and self.structureNode.order_by('pubDate')[0].title != "":
@@ -165,6 +169,7 @@ class Image(models.Model):
     structureNode = generic.GenericRelation(StructureNode)
     linkSource = models.URLField(max_length=200, blank=True, null=True)
     localSource = models.ImageField(upload_to='content/image', blank=True, null=True)
+    originalStructureNode = TreeForeignKey(StructureNode, null=True, blank=True, related_name="original_image_content")
     
     def __unicode__(self):
         if self.structureNode.order_by('pubDate').exists() and self.structureNode.order_by('pubDate')[0].title != "":
@@ -197,6 +202,7 @@ class Timelike(models.Model):
     structureNode = generic.GenericRelation(StructureNode)
     linkSource = models.URLField(max_length=200, blank=True, null=True)
     localSource = models.FileField(upload_to='content/video', blank=True, null=True)
+    originalStructureNode = TreeForeignKey(StructureNode, null=True, blank=True, related_name="original_timelike_content")
     
     def __unicode__(self):
         if self.structureNode.order_by('pubDate').exists() and self.structureNode.order_by('pubDate')[0].title != "":
@@ -230,6 +236,7 @@ class Dataset(models.Model):
     structureNode = generic.GenericRelation(StructureNode)
     data = JSONField(load_kwargs={'object_pairs_hook': collections.OrderedDict} ,blank=True, null=True)
     dataFile = models.FileField(upload_to='content/data', blank=True, null=True)
+    originalStructureNode = TreeForeignKey(StructureNode, null=True, blank=True, related_name="original_dataset_content")
     
     def getGlobalDict(self):
         decodedData = json.loads(json.dumps(self.data), object_pairs_hook=collections.OrderedDict)
