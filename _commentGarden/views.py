@@ -40,7 +40,7 @@ def submitComment(request):
                     contentNode.parent = commentNode
                     contentNode.author = request.user
                     contentNode.isComment = True
-                    contentNode.position = contentNodeIndex +1
+                    contentNode.position = contentNodeIndex
                     if (request.POST['contentType_section_content_'+str(0)+"_"+str(contentNodeIndex)] == "textContent"):
                         tempParagraph = Paragraph()
                         tempParagraph.text = request.POST['text_section_content_'+str(0)+"_"+str(contentNodeIndex)]

@@ -1,5 +1,5 @@
 {% extends '_user/userBase.html' %}
-
+{% load mptt_tags %}
 {% block title %}
 {{ user.username }} | Publish
 {% endblock %}
@@ -279,14 +279,14 @@ $(document).ready(function () {
 <div class="publishFormContainer">
 
 	<div class="publishFormSubmission">
-	<div class="publishFormMenuContainer">
-		<div class="publishFormHelperMenu">
-			<button type="button" id="textContentButton" class="btn btn-text btn-publish-menu big" title="Add a new Paragraph">&para;</button>
-			<button type="button" id="imageContentButton" class="btn btn-picture btn-publish-menu" title="Add a new Image"><i class="icon-picture"></i></button>
-			<button type="button" id="videoContentButton" class="btn btn-timelike btn-publish-menu" title="Add a new Video"><i class="icon-film"></i></button>
-			<button type="button" id="dataContentButton" class="btn btn-data btn-publish-menu" title="Add a new Dataset"><i class="icon-bar-chart"></i></button>
+		<div class="publishFormMenuContainer">
+			<div class="publishFormHelperMenu">
+				<button type="button" id="textContentButton" class="btn btn-text btn-publish-menu big" title="Add a new Paragraph">&para;</button>
+				<button type="button" id="imageContentButton" class="btn btn-picture btn-publish-menu" title="Add a new Image"><i class="icon-picture"></i></button>
+				<button type="button" id="videoContentButton" class="btn btn-timelike btn-publish-menu" title="Add a new Video"><i class="icon-film"></i></button>
+				<button type="button" id="dataContentButton" class="btn btn-data btn-publish-menu" title="Add a new Dataset"><i class="icon-bar-chart"></i></button>
+			</div>
 		</div>
-	</div>
 		<form id="publishForm" action="" method="post" enctype="multipart/form-data">
 			{% csrf_token %}{{ publishForm.non_field.errors }}
 			<div class="titleSubmission">
@@ -304,19 +304,75 @@ $(document).ready(function () {
 					</div>
 				</div>
 			</div>
-			<div class="sectionSubmission">
-				<div class="sectionTitleSubmission input-group">
-					<input class="sectionTitleInput form-control" name="section_title_0" type="text" placeholder="Section Title"><span class="input-group-btn"><button type="button" class="btn btn-publish-deleteSection">Delete This Section</button></span>
-				</div>
-				<div class="emptyContentContainer">Click to Add Content Here</div>
-				<div class="hiddenFields">
-					<input type="hidden" class="class_numberOfContentSections" id="id_numberOfContentSections_0" name="numberOfContentSections_0" value=0>
-					<input type="hidden" class="class_sectionPosition" name="sectionPosition" value=0>
-				</div>
-			</div>
-			<div class="hiddenFields">
-				<input id="input_numberOfSections" type="hidden" name="numberOfSections" value=1 >
-			</div>
+			{% recursetree nodes %}
+				{% if node.is_root_node %}
+					<div class="hiddenFields">
+						<input id="input_numberOfSections" type="hidden" name="numberOfSections" value={{ node.childrenCount }} >
+						<input type="hidden" name="rootID" value={{ node.id }}>
+					</div>
+					{{ children }}
+				{% elif node.isTypeNone %}
+					<div class="sectionSubmission">
+						<div class="sectionTitleSubmission input-group">
+							<input class="sectionTitleInput form-control" name="section_title_{{ node.position }}" type="text" placeholder="Section Title" value="{{ node.title }}"><span class="input-group-btn"><button type="button" class="btn btn-publish-deleteSection">Delete This Section</button></span>
+						</div>
+						<div class="emptyContentContainer">Click to Add Content Here</div>
+						{{ children }}
+						<div class="hiddenFields">
+							<input type="hidden" class="class_numberOfContentSections" id="id_numberOfContentSections_{{ node.position }}" name="numberOfContentSections_{{ node.position }}" value={{ node.childrenCount }}>
+							<input type="hidden" class="class_sectionPosition" name="sectionPosition" value={{ node.position }}>
+							<input type="hidden" class="class_nodeID" name="sectionNodeID_{{ node.position }}" value="{{ node.id }}" >
+						</div>
+					</div>
+				{% elif node.isTypeParagraph %}
+					<div class="contentInputContainer">
+						<div class="textSubmission">
+							<div class="textInputContainer">
+								<textarea class="form-control" rows="10" name="text_section_content_{{ node.parent.position }}_{{ node.position }}">{{ node.content_object.text }}</textarea>
+							</div>
+							<div class="hiddenFields">
+								<input type="hidden" class="contentType" value="textContent" name="contentType_section_content_{{ node.parent.position }}_{{ node.position }}">
+								<input type="hidden" class="contentID" name="contentNodeID_{{ node.parent.position }}_{{ node.position }}" value="{{ node.id }}">
+							</div>	
+						</div>
+						<div class="edittingButtonsContainer">
+							<button type="button" class="btn btn-move-up">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-move-down">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-delete">
+								<i class="icon-remove"></i>
+							</button>
+						</div>
+					</div>
+					<div class="emptyContentContainer">Click to Add Content Here</div>
+				{% elif node.isTypeImage %}
+					<div class="contentInputContainer">
+						<div class="imageSubmission">
+							<div class="imageInputContainer">
+								<div class="variableHeader">
+									<h3>Insert Image</h3>
+									<div class="selectSource">
+										<button type="button" class="btn btn-upload">From File</button>
+										<button type="button" class="btn btn-link">From a URL</button>
+										<button type="button" class="btn btn-labbook">From Labbook</button>
+									</div>
+								</div>
+								<div class="localSourceSubmission">
+									<div class="localSourceInputContainer">
+										<input class="imageInputLocalSource inputLocalSource" type="file" name="imageInputLocalSource_section_content_{{ node.parent.position }}_{{ node.position }}">
+									</div>
+								</div>
+							
+							</div>
+						</div>
+					</div>
+					<div class="emptyContentContainer">Click to Add Content Here</div>						
+				{% endif %}
+			{% endrecursetree %}
+
 			<button id="publishFormButton" type="submit" class="btn btn-primary">Submit</button>
 			<button type="button" class="btn btn-primary btn-publish-newSection pull-right" id="addNewSection">Add New Section</button>	
 		</form>		

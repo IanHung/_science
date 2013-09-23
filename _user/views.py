@@ -116,7 +116,7 @@ def userPublish(request):
                     sectionNode.parent = experimentNode
                     sectionNode.author = request.user
                     sectionNode.isPublished = True
-                    sectionNode.position = sectionNodeIndex + 1
+                    sectionNode.position = sectionNodeIndex
                     sectionNode.save()
                     restrictedTagListSave(request, sectionNode, tagList) 
                 for contentNodeIndex in range(0, int(request.POST['numberOfContentSections_'+str(sectionNodeIndex)])):
@@ -127,7 +127,7 @@ def userPublish(request):
                         contentNode.parent = sectionNode
                         contentNode.author = request.user
                         contentNode.isPublished = True
-                        contentNode.position = contentNodeIndex +1
+                        contentNode.position = contentNodeIndex
                         if (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "textContent"):
                             tempParagraph = Paragraph()
                             tempParagraph.text = request.POST['text_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
