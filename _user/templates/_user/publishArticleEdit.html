@@ -360,18 +360,77 @@ $(document).ready(function () {
 										{% if labbook_imageNode_list %}<button type="button" class="btn btn-labbook">From Labbook</button>{% endif %}
 									</div>
 								</div>
-								<div class="localSourceSubmission" {% if not node.content_object.isLocalSource %}style="display: none;"{% endif %}>
+								<div class="localSourceSubmission" {% if node.content_object.originalStructureNode.isLabnote or not node.content_object.isLocalSource %}style="display: none;"{% endif %}>
 									<div class="localSourceInputContainer" >
 										{% if node.content_object.isLocalSource %}<p>Currently: <a href={{ node.content_object.localSource.url }}>{{ node.content_object.localSource.name }}</a></p>{% endif %}
 										<input class="imageInputLocalSource inputLocalSource" type="file" name="imageInputLocalSource_section_content_{{ node.parent.position }}_{{ node.position }}">
 									</div>
 								</div>
-								<div class="linkSourceSubmission" {% if not node.content_object.isLinkSource %}style="display: none;"{% endif %}>
+								<div class="linkSourceSubmission" {% if node.content_object.originalStructureNode.isLabnote or not node.content_object.isLinkSource %}style="display: none;"{% endif %}>
 									<div class="linkSourceInputContainer">
-										<input id="id_imageFormLinkSource" class="imageInputLinkSource inputLinkSource" placeholder="Enter URL of image." type="text" value="{{ node.content_object.linkSource }}" />
+										<input id="id_imageFormLinkSource" class="imageInputLinkSource inputLinkSource" placeholder="Enter URL of an image." type="text" value="{{ node.content_object.linkSource }}" />
 									</div>
 								</div>
+								{% if labbook_imageNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="imageInputLabbookSource inputLabbookSource" id="id_imageFormLabbookSource" ><option value="">---------</option>{% for imageNode in labbook_imageNode_list %}<option value="{{ imageNode.object_id }}" {% if imageNode.id == node.id %}selected="selected"{% endif %}>{{ imageNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
+								<div class="hiddenfield">
+									<input type="hidden" class="contentType" value="imageContent" name="contentTpye_section_content_{{ node.parent.position }}_{{ node.position }}">
+									<input type="hidden" class="contentID" name="contentNodeID_{{ node.parent.position }}_{{ node.position }}" value="{{ node.id }}">
+								</div>
 							</div>
+						</div>
+						<div class="edittingButtonsContainer">
+							<button type="button" class="btn btn-move-up">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-move-down">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-delete">
+								<i class="icon-remove"></i>
+							</button>
+						</div>
+					</div>
+					<div class="emptyContentContainer">Click to Add Content Here</div>
+				{% elif node.isTypeTimelike %}
+					<div class="contentInputContainer">
+						<div class="timelikeSubmission">
+							<div class="timelikeInputContainer">
+								<div class="variableHeader">
+									<h3>Insert Video</h3>
+									<div class="selectSource">
+										<button type="button" class="btn btn-upload">From File</button>
+										<button type="button" class="btn btn-link">From a URL</button>
+										{% if labbook_timelikeNode_list %}<button type="button" class="btn btn-labbook">From Labbook</button>{% endif %}
+									</div>
+								</div>
+								<div class="localSourceSubmission" {% if node.content_object.originalStructureNode.isLabnote or not node.content_object.isLocalSource %}style="display: none;"{% endif %}>
+									<div class="localSourceInputContainer" >
+										{% if node.content_object.isLocalSource %}<p>Currently: <a href={{ node.content_object.localSource.url }}>{{ node.content_object.localSource.name }}</a></p>{% endif %}
+										<input class="timelikeInputLocalSource inputLocalSource" type="file" name="timelikeInputLocalSource_section_content_{{ node.parent.position }}_{{ node.position }}">
+									</div>
+								</div>
+								<div class="linkSourceSubmission" {% if node.content_object.originalStructureNode.isLabnote or not node.content_object.isLinkSource %}style="display: none;"{% endif %}>
+									<div class="linkSourceInputContainer">
+										<input id="id_timelikeFormLinkSource" class="timelikeInputLinkSource inputLinkSource" placeholder="Enter URL of a video." type="text" value="{{ node.content_object.linkSource }}" />
+									</div>
+								</div>
+								{% if labbook_timelikeNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="timelikeInputLabbookSource inputLabbookSource" id="id_timelikeFormLabbookSource" ><option value="">---------</option>{% for timelikeNode in labbook_timelikeNode_list %}<option value="{{ timelikeNode.object_id }}" {% if timelikeNode.id == node.id %}selected="selected"{% endif %}>{{ timelikeNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
+								<div class="hiddenfield">
+									<input type="hidden" class="contentType" value="timelikeContent" name="contentTpye_section_content_{{ node.parent.position }}_{{ node.position }}">
+									<input type="hidden" class="contentID" name="contentNodeID_{{ node.parent.position }}_{{ node.position }}" value="{{ node.id }}">
+								</div>
+							</div>
+						</div>
+						<div class="edittingButtonsContainer">
+							<button type="button" class="btn btn-move-up">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-move-down">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-delete">
+								<i class="icon-remove"></i>
+							</button>
 						</div>
 					</div>
 					<div class="emptyContentContainer">Click to Add Content Here</div>						
