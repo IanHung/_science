@@ -337,7 +337,8 @@ $(document).ready(function(){
 		    		<button type="button" class="btn btn-comment articleAddCommentPosition" id="{{ node.slug }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
 		    	</div>
 		    {% elif node.isTypeDataset and node.isPublished == True %}
-		    	<div class='contentContainer {{ node.slug }}'> 	  
+		    	<div class='contentContainer {{ node.slug }}'>
+		    		{% if node.content_object.getGlobalDict.items %} 	  
 		    		<h3>Constants</h3>
 		    		<table class="table">
 		    			<thead>
@@ -355,6 +356,8 @@ $(document).ready(function(){
 		    				</tr>
 		    			</tbody>			
 		    		</table>
+		    		{% endif %}
+		    		{% if node.content_object.getDatasetVariableNames %}
 		    		<h3>Data Set</h3>
 		    		<table class="table">
 		    			<thead>
@@ -373,7 +376,8 @@ $(document).ready(function(){
 		    				</tr>
 		    				{% endfor %}
 		    			</tbody>	
-		    		</table>			
+		    		</table>
+		    		{% endif %}			
 		    		<button type="button" class="btn btn-comment articleCommentPosition" id="{{ node.slug }}CommentButton">{{ node.commentCount }}</button>
 		    		<button type="button" class="btn btn-comment articleAddCommentPosition" id="{{ node.slug }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
 		    	</div>		
@@ -421,6 +425,7 @@ $(document).ready(function(){
 		    	</div>
 		    	{% elif node.isTypeDataset and node.isComment == True %}
 		    	<div class='contentContainer {{ node.slug }}'> 	  
+		    		{% if node.content_object.getGlobalDict.items %}
 		    		<h3>Constants</h3>
 		    		<table class="table">
 		    			<thead>
@@ -438,6 +443,8 @@ $(document).ready(function(){
 		    				</tr>
 		    			</tbody>			
 		    		</table>
+		    		{% endif %}
+		    		{% if node.content_object.getDatasetVariableNames %}
 		    		<h3>Data Set</h3>
 		    		<table class="table">
 		    			<thead>
@@ -456,7 +463,8 @@ $(document).ready(function(){
 		    				</tr>
 		    				{% endfor %}
 		    			</tbody>	
-		    		</table>			
+		    		</table>
+		    		{% endif %}			
 		    	</div>
 		    {% else %}
 		    	{% if not node.is_leaf_node %}{{ children }}{% endif %} 			

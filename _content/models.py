@@ -114,6 +114,7 @@ class StructureNode(MPTTModel):
         if self.content_type:
             if not self.content_object.originalStructureNode:
                 self.content_object.originalStructureNode_id = self.id
+                self.content_object.save()
         super(StructureNode, self).save()
         
     #slug produces invalid javascript variables
