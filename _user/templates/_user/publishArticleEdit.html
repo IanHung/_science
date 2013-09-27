@@ -7,13 +7,16 @@
 {% block head %}
 <script>
 $(document).ready(function () {
-	var sectionCounter = 1;
+	var sectionCounter = {% if nodes.0 %}{{nodes.0.get_root.childrenCount }}{% else %}1{% endif %};
 	var $focusedEmptyContainer;
 
 	
 	//positionNewSectionButton();
 	function nameSetterFunction(contentInputContainer, thisSectionPosition, thisSectionContentCounter){
 		var $child = $(contentInputContainer).children();
+		var $contentID = $child.find(".contentID");
+		var contentIDName = "contentNodeID_"+thisSectionPosition + "_" + thisSectionContentCounter;
+		$contentID.attr("name", contentIDName);
 		if ($child.hasClass("textSubmission")){
 			var $thisTextarea = $child.find("textarea");
 			var newName = "text_section_content_"+thisSectionPosition +"_"+thisSectionContentCounter;
@@ -233,19 +236,27 @@ $(document).ready(function () {
 		//positionPublishFormHelperMenu();
 		//$(".publishFormHelperMenu").hide();
 		$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter);
-		
+		if ($thisParent.find(".contentID").length > 0){
+			$(".rootID").after('<input type="hidden" class="deletedNodes"  name="deletedNodes" value="'+$thisParent.find(".contentID").val() +'" >');
+			alert("test");
+		}
 		$thisParent.remove();	
 		
 	});
 	
 	//Deletes a section and renames remaining sections.
 	$('#publishForm').on('click','.btn-publish-deleteSection',function(){
+		var $this1 = $(this);
 		if (sectionCounter > 1){
-			if ($(this).parents(".sectionSubmission").find(".publishFormHelperMenu").length > 0){
+			if ($this1.parents(".sectionSubmission").find(".publishFormHelperMenu").length > 0){
 				$(".publishFormContainer").after($(".publishFormHelperMenu"));
 				$(".publishFormHelperMenu").unbind().hide();
 			}
-			$(this).parents(".sectionSubmission").remove();
+			if($this1.parents(".sectionSubmission").find(".sectionID").length > 0){
+				$(".rootID").after('<input type="hidden" class="deletedNodes"  name="deletedNodes" value="'+$this1.parents(".sectionSubmission").find(".sectionID").val() +'" >');
+				alert("test");
+			}
+			$this1.parents(".sectionSubmission").remove();
 			
 			var thisSectionPosition = 0;
 			$(".sectionSubmission").each(function(){
@@ -308,7 +319,8 @@ $(document).ready(function () {
 				{% if node.is_root_node %}
 					<div class="hiddenFields">
 						<input id="input_numberOfSections" type="hidden" name="numberOfSections" value={{ node.childrenCount }} >
-						<input type="hidden" name="rootID" value={{ node.id }}>
+						<input type="hidden" class="rootID" name="rootID" value={{ node.id }}>
+					
 					</div>
 					{{ children }}
 				{% elif node.isTypeNone %}
@@ -321,7 +333,8 @@ $(document).ready(function () {
 						<div class="hiddenFields">
 							<input type="hidden" class="class_numberOfContentSections" id="id_numberOfContentSections_{{ node.position }}" name="numberOfContentSections_{{ node.position }}" value={{ node.childrenCount }}>
 							<input type="hidden" class="class_sectionPosition" name="sectionPosition" value={{ node.position }}>
-							<input type="hidden" class="class_nodeID" name="sectionNodeID_{{ node.position }}" value="{{ node.id }}" >
+							<input type="hidden" class="sectionID" name="sectionNodeID_{{ node.position }}" value="{{ node.id }}" >
+							
 						</div>
 					</div>
 				{% elif node.isTypeParagraph %}

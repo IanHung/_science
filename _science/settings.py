@@ -146,7 +146,6 @@ INSTALLED_APPS = (
      '_commentGarden',
      '_user',
      'storages',
-     
 )
 #Setting up user registration.
 
