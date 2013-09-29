@@ -57,6 +57,149 @@ def userArticleEdit(request, article_url):
     return render(request, '_user/publishArticleEdit.html', {'nodes':tree_list, 'publishForm':publishForm, 'labbook_imageNode_list': labbook_imageNode_list, 'labbook_timelikeNode_list': labbook_timelikeNode_list, 'labbook_dataNode_list': labbook_dataNode_list, })
 
 @login_required
+def userArticleEditSubmit(request):
+    deleteList = filter(None, request.POST.getlist('deletedNodes'))
+    if deleteList:
+        for nodeIndex in deleteList:
+            tempDeleteItem = StructureNode.objects.get(id=nodeIndex, author=request.user)
+            tempDeleteItem.delete()
+    publishForm = PublishForm()
+    if (request.method == 'POST'):
+        print(request.POST)
+        publishForm = PublishForm(request.POST)
+        if (publishForm.is_valid()):
+            experimentNode = StructureNode.objects.get(id=int(request.POST['rootID']), author=request.user)
+            experimentNode.title = publishForm.cleaned_data['publishFormTitle']
+            experimentNode.save()
+            experimentNode.tag_set.clear()
+            tagList = hashTagParser(publishForm.cleaned_data['publishFormTag'])
+            restrictedTagListSave(request, experimentNode, tagList) 
+            for sectionNodeIndex in range(0, int(request.POST['numberOfSections'])):
+                tempSectionData = {'title': request.POST['section_title_'+str(sectionNodeIndex)]}
+                if (request.POST.get('sectionNodeID_'+str(sectionNodeIndex), False)):
+                    sectionNodeInstance = StructureNode.objects.get(id=int(request.POST['sectionNodeID_'+str(sectionNodeIndex)]), author=request.user)
+                    sectionNodeForm = StructureNodeTitleForm(tempSectionData, instance=sectionNodeInstance)
+                    print('here')
+                else:
+                    sectionNodeForm = StructureNodeTitleForm(tempSectionData)
+                if sectionNodeForm.is_valid():
+                    sectionNode = sectionNodeForm.save(commit=False)
+                    sectionNode.parent = experimentNode
+                    sectionNode.author = request.user
+                    sectionNode.isPublished = True
+                    sectionNode.position = sectionNodeIndex
+                    sectionNode.save()
+                    sectionNode.tag_set.clear()
+                    restrictedTagListSave(request, sectionNode, tagList) 
+                for contentNodeIndex in range(0, int(request.POST['numberOfContentSections_'+str(sectionNodeIndex)])):
+                    tempContentNodeData = {'title': request.POST['section_title_'+str(sectionNodeIndex)] +"_content_"+str(contentNodeIndex)}
+                    if (request.POST.get('contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex), False)):
+                        contentNodeInstance = StructureNode.objects.get(id=int(request.POST['contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex)]), author=request.user)
+                        contentNodeForm = StructureNodeTitleForm(tempContentNodeData, instance=contentNodeInstance)
+                    else:
+                        contentNodeForm = StructureNodeTitleForm(tempContentNodeData)
+                    if contentNodeForm.is_valid():
+                        contentNode = contentNodeForm.save(commit=False)
+                        contentNode.parent = sectionNode
+                        contentNode.author = request.user
+                        contentNode.isPublished = True
+                        contentNode.position = contentNodeIndex
+                        
+                        if (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "textContent"):
+                            tempParagraph = Paragraph()
+                            tempParagraph.text = request.POST['text_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
+                            tempParagraphDict = model_to_dict(tempParagraph)
+                            if (request.POST.get('contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex), False)):
+                                paragraphFormInstance = StructureNode.objects.get(id=int(request.POST['contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex)]), author=request.user).content_object
+                                paragraphForm = ParagraphForm(tempParagraphDict, instance=paragraphFormInstance)
+                            else:
+                                paragraphForm = ParagraphForm(tempParagraphDict)
+                            if paragraphForm.is_valid():
+                                tempParagraph = paragraphForm.save()
+                            contentNode.content_type = ContentType.objects.get_for_model(Paragraph)
+                            contentNode.object_id = tempParagraph.id                        
+                            contentNode.save()
+                        elif (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "imageContent"):
+                            contentNode.content_type = ContentType.objects.get_for_model(Image)
+                            if (request.POST.get('imageInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                tempImage = Image()
+                                tempImage.linkSource = request.POST['imageInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
+                                tempImageDict=model_to_dict(tempImage)
+                                if (request.POST.get('contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex), False)):
+                                    imageFormInstance = StructureNode.objects.get(id=int(request.POST['contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex)]), author=request.user).content_object
+                                    imageFormInstance.localSource = None
+                                    imageFormInstance.save()
+                                    imageForm = ImageForm(tempImageDict, instance=imageFormInstance)
+                                    print("Ian menghung")
+                                else:
+                                    imageForm = ImageForm(tempImageDict)
+                                if imageForm.is_valid():
+                                    tempImage = imageForm.save()
+                                    print("working")
+                                else:
+                                    tempImage = imageFormInstance
+                                    print(imageForm.errors)
+                                    print("not working")
+                                contentNode.object_id = tempImage.id
+                                
+                            elif (request.FILES.get('imageInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                if (request.POST.get('contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex), False)):
+                                    tempImage = StructureNode.objects.get(id=int(request.POST['contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex)]), author=request.user).content_object
+                                    tempImage.linkSource=None
+                                    print("Ian menghung2")
+                                else:
+                                    tempImage = Image()
+                                    print("Ian menghung23")
+                                tempImage.localSource = request.FILES['imageInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
+                                tempImage.save()
+                                contentNode.object_id = tempImage.id
+                                
+                            elif (request.POST.get('imageInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                contentNode.object_id = int(request.POST['imageInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)])
+                                
+                            contentNode.save()
+                        elif (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "timelikeContent"):
+                            contentNode.content_type = ContentType.objects.get_for_model(Timelike)
+                            if (request.POST.get('timelikeInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                tempTimelike = Timelike()
+                                tempTimelike.linkSource = request.POST['timelikeInputLinkSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
+                                tempTimelike.localSource = None
+                                tempTimelikeDict = model_to_dict(tempTimelike)
+                                if (request.POST.get('contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex), False)):
+                                    timelikeFormInstance = StructureNode.objects.get(id=int(request.POST['contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex)]), author=request.user).content_object
+                                    timelikeForm = TimelikeForm(tempTimelikeDict, instance=timelikeFormInstance)
+                                else:
+                                    timelikeForm = TimelikeForm(tempTimelikeDict)
+                                if timelikeForm.is_valid():
+                                    tempTimelike = timelikeForm.save()
+                                contentNode.object_id = tempTimelike.id
+                                
+                            elif (request.FILES.get('timelikeInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                if (request.POST.get('contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex), False)):
+                                    tempTimelike = StructureNode.objects.get(id=int(request.POST['contentNodeID_'+str(sectionNodeIndex) +'_'+str(contentNodeIndex)]), author=request.user).content_object
+                                    tempTimelike.linkSource=None
+                                else:
+                                    tempTimelike = Timelike()
+                                tempTimelike.localSource = request.FILES['timelikeInputLocalSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)]
+                                tempTimelike.save()
+                                contentNode.object_id = tempTimelike.id
+                                
+                            elif (request.POST.get('timelikeInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                contentNode.object_id = int(request.POST['timelikeInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)])
+                                
+                            contentNode.save()
+                        elif (request.POST['contentType_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)] == "dataContent"):
+                            contentNode.content_type = ContentType.objects.get_for_model(Dataset)
+                            if (request.POST.get('dataInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex))):
+                                contentNode.object_id = int(request.POST['dataInputLabbookSource_section_content_'+str(sectionNodeIndex)+"_"+str(contentNodeIndex)])
+                            contentNode.save()
+                        contentNode.tag_set.clear()
+                        restrictedTagListSave(request, contentNode, tagList) 
+                        
+    return HttpResponseRedirect(reverse('userArticleEdit', args=[experimentNode.url,]))
+
+
+@login_required
 def userArticleIndex(request):    
     all_article_list = StructureNode.objects.filter(Q(mptt_level=0)|Q(isUpdate=True)).filter(author=request.user, isPublished=True).exclude(rating__isnull=True).order_by('-pubDate')
     paginator = Paginator(all_article_list, 25) # Show 25 contacts per page

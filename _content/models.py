@@ -111,8 +111,8 @@ class StructureNode(MPTTModel):
         else:
             self.url = self.slug
             
-        if self.content_type:
-            if not self.content_object.originalStructureNode:
+        if self.content_object:
+            if self.content_object.originalStructureNode is None:
                 self.content_object.originalStructureNode_id = self.id
                 self.content_object.save()
         super(StructureNode, self).save()

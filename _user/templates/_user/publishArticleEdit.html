@@ -238,7 +238,6 @@ $(document).ready(function () {
 		$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter);
 		if ($thisParent.find(".contentID").length > 0){
 			$(".rootID").after('<input type="hidden" class="deletedNodes"  name="deletedNodes" value="'+$thisParent.find(".contentID").val() +'" >');
-			alert("test");
 		}
 		$thisParent.remove();	
 		
@@ -254,7 +253,6 @@ $(document).ready(function () {
 			}
 			if($this1.parents(".sectionSubmission").find(".sectionID").length > 0){
 				$(".rootID").after('<input type="hidden" class="deletedNodes"  name="deletedNodes" value="'+$this1.parents(".sectionSubmission").find(".sectionID").val() +'" >');
-				alert("test");
 			}
 			$this1.parents(".sectionSubmission").remove();
 			
@@ -271,6 +269,8 @@ $(document).ready(function () {
 				});
 				var newNumberOfContentSectionsName = "numberOfContentSections_" + thisSectionPosition;
 				$this.find(".class_numberOfContentSections").attr("name", newNumberOfContentSectionsName).val(thisSectionContentCounter);
+				var newSectionID = "sectionNodeID_" + thisSectionPosition;
+				$this.find(".sectionID").attr("name", newSectionID);
 				thisSectionPosition++;
 			});
 			
@@ -298,7 +298,7 @@ $(document).ready(function () {
 				<button type="button" id="dataContentButton" class="btn btn-data btn-publish-menu" title="Add a new Dataset"><i class="icon-bar-chart"></i></button>
 			</div>
 		</div>
-		<form id="publishForm" action="" method="post" enctype="multipart/form-data">
+		<form id="publishForm" action={% url 'userArticleEditSubmit' %} method="post" enctype="multipart/form-data">
 			{% csrf_token %}{{ publishForm.non_field.errors }}
 			<div class="titleSubmission">
 				{{ publishForm.publishFormTitle.errors }}
@@ -381,12 +381,12 @@ $(document).ready(function () {
 								</div>
 								<div class="linkSourceSubmission" {% if node.content_object.originalStructureNode.isLabnote or not node.content_object.isLinkSource %}style="display: none;"{% endif %}>
 									<div class="linkSourceInputContainer">
-										<input id="id_imageFormLinkSource" class="imageInputLinkSource inputLinkSource" placeholder="Enter URL of an image." type="text" value="{{ node.content_object.linkSource }}" />
+										<input id="id_imageFormLinkSource" class="imageInputLinkSource inputLinkSource" name="imageInputLinkSource_section_content_{{ node.parent.position }}_{{ node.position }}" placeholder="Enter URL of an image." type="text" value="{{ node.content_object.linkSource }}" />
 									</div>
 								</div>
-								{% if labbook_imageNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="imageInputLabbookSource inputLabbookSource" id="id_imageFormLabbookSource" ><option value="">---------</option>{% for imageNode in labbook_imageNode_list %}<option value="{{ imageNode.object_id }}" {% if imageNode.object_id == node.object_id %}selected="selected"{% endif %}>{{ imageNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
+								{% if labbook_imageNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="imageInputLabbookSource inputLabbookSource" id="id_imageFormLabbookSource" name="imageInputLabbookSource_section_content_{{ node.parent.position }}_{{ node.position }}"><option value="">---------</option>{% for imageNode in labbook_imageNode_list %}<option value="{{ imageNode.object_id }}" {% if imageNode.object_id == node.object_id %}selected="selected"{% endif %}>{{ imageNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
 								<div class="hiddenfield">
-									<input type="hidden" class="contentType" value="imageContent" name="contentTpye_section_content_{{ node.parent.position }}_{{ node.position }}">
+									<input type="hidden" class="contentType" value="imageContent" name="contentType_section_content_{{ node.parent.position }}_{{ node.position }}">
 									<input type="hidden" class="contentID" name="contentNodeID_{{ node.parent.position }}_{{ node.position }}" value="{{ node.id }}">
 								</div>
 							</div>
@@ -424,12 +424,12 @@ $(document).ready(function () {
 								</div>
 								<div class="linkSourceSubmission" {% if node.content_object.originalStructureNode.isLabnote or not node.content_object.isLinkSource %}style="display: none;"{% endif %}>
 									<div class="linkSourceInputContainer">
-										<input id="id_timelikeFormLinkSource" class="timelikeInputLinkSource inputLinkSource" placeholder="Enter URL of a video." type="text" value="{{ node.content_object.linkSource }}" />
+										<input id="id_timelikeFormLinkSource" class="timelikeInputLinkSource inputLinkSource" name="timelikeInputLinkSource_section_content_{{ node.parent.position }}_{{ node.position }}" placeholder="Enter URL of a video." type="text" value="{{ node.content_object.linkSource }}" />
 									</div>
 								</div>
-								{% if labbook_timelikeNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="timelikeInputLabbookSource inputLabbookSource" id="id_timelikeFormLabbookSource" ><option value="">---------</option>{% for timelikeNode in labbook_timelikeNode_list %}<option value="{{ timelikeNode.object_id }}" {% if timelikeNode.object_id == node.object_id %}selected="selected"{% endif %}>{{ timelikeNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
+								{% if labbook_timelikeNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="timelikeInputLabbookSource inputLabbookSource" id="id_timelikeFormLabbookSource" name="timelikeInputLabbookSource_section_content_{{ node.parent.position }}_{{ node.position }}"><option value="">---------</option>{% for timelikeNode in labbook_timelikeNode_list %}<option value="{{ timelikeNode.object_id }}" {% if timelikeNode.object_id == node.object_id %}selected="selected"{% endif %}>{{ timelikeNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
 								<div class="hiddenfield">
-									<input type="hidden" class="contentType" value="timelikeContent" name="contentTpye_section_content_{{ node.parent.position }}_{{ node.position }}">
+									<input type="hidden" class="contentType" value="timelikeContent" name="contentType_section_content_{{ node.parent.position }}_{{ node.position }}">
 									<input type="hidden" class="contentID" name="contentNodeID_{{ node.parent.position }}_{{ node.position }}" value="{{ node.id }}">
 								</div>
 							</div>
@@ -459,10 +459,10 @@ $(document).ready(function () {
 								<div class="manualSubmission" {% if node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}>
 									<div class="manualInputContainer" ></div>
 								</div>
-								{% if labbook_dataNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="dataInputLabbookSource inputLabbookSource"><option value="" >---------</option>{% for dataNode in labbook_dataNode_list %}<option value="{{ dataNode.object_id }}" {% if dataNode.object_id == node.object_id %}selected="selected"{% endif %}>{{ dataNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
+								{% if labbook_dataNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="dataInputLabbookSource inputLabbookSource" name="dataInputLabbookSource_section_content_{{ node.parent.position }}_{{ node.position }}"><option value="" >---------</option>{% for dataNode in labbook_dataNode_list %}<option value="{{ dataNode.object_id }}" {% if dataNode.object_id == node.object_id %}selected="selected"{% endif %}>{{ dataNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
 							</div>
 							<div class="hiddenfield">
-								<input type="hidden" class="contentType" value="dataContent" name="contentTpye_section_content_{{ node.parent.position }}_{{ node.position }}">
+								<input type="hidden" class="contentType" value="dataContent" name="contentType_section_content_{{ node.parent.position }}_{{ node.position }}">
 								<input type="hidden" class="contentID" name="contentNodeID_{{ node.parent.position }}_{{ node.position }}" value="{{ node.id }}">
 							</div>
 						</div>
