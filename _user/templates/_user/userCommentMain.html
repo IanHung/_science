@@ -29,9 +29,9 @@
 					<tr>
 						<td>{{ StructureNode.title }}</td>
 						<td>{% if StructureNode.isPublished and StructureNode.isDraft %}Draft{% else %}Published{% endif %}</td>
-						<td class="nowrapWhiteSpace">{{StructureNode.pubDate }}</td>
+						<td class="nowrapWhiteSpace">{{ StructureNode.pubDate }}</td>
 						<td class="desktop">{{ StructureNode.getNearestAbstractParagraph }}</td>
-						<td><a class="btn btn-default btn-new" href="" title="Edit Article"><i class="icon-pencil"></i></a><form class="deleteArticle" method="post" enctype="multipart/form-data" action={% url 'userArticleDelete' %} title="Delete Article">{% csrf_token %}<button class="btn btn-default btn-new" href={% url "userPublish" %}><i class="icon-remove"></i></button><div class="hiddenFields"><input type="hidden" name="nodeID" value='{{ StructureNode.id }}'></div></form></td>
+						<td><a class="btn btn-default btn-new" href={% url "userCommentEdit" StructureNode.url|urlencode %} title="Edit Article"><i class="icon-pencil"></i></a><form class="deleteArticle" method="post" enctype="multipart/form-data" action={% url 'userArticleDelete' %} title="Delete Article">{% csrf_token %}<button class="btn btn-default btn-new" href={% url "userPublish" %}><i class="icon-remove"></i></button><div class="hiddenFields"><input type="hidden" name="nodeID" value='{{ StructureNode.id }}'></div></form></td>
 					</tr>
 					{% endfor %}	
 				</tbody>

@@ -10,6 +10,8 @@ from _user import views
 urlpatterns = patterns('',
                        url(r'^$', views.userDashboard, name='userDashboard'),
                        url(r'^comment/$', views.userComment, name='userComment'),
+                       url(r'^comment/edit/(?P<comment_url>.*)/$', views.userCommentEdit, name='userCommentEdit'),
+                       url(r'^comment/submit/edit/$', views.userCommentEditSubmit, name='userCommentEditSubmit'),
                        url(r'^labbook/tag/(?P<subject_url>[^/]+)/$', views.userLabbook, name='userLabbookTag'),
                        url(r'^labbook/$', views.userLabbook, name='userLabbook'),
                        url(r'^labbook/user/(?P<user_url>[^/]+)/$', views.userLabbookNameTag, name='userLabbookName'),

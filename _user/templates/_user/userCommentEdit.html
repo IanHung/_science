@@ -1,0 +1,524 @@
+{% extends '_user/userBase.html' %}
+{% load mptt_tags %}
+{% block title %}
+{{ user.username }} | Publish
+{% endblock %}
+
+{% block head %}
+<script>
+$(document).ready(function () {
+	var sectionCounter = {% if nodes.0 %}{{nodes.0.get_root.childrenCount }}{% else %}1{% endif %};
+	var $focusedEmptyContainer;
+
+	
+	//positionNewSectionButton();
+	function nameSetterFunction(contentInputContainer, thisSectionPosition, thisSectionContentCounter){
+		var $child = $(contentInputContainer).children();
+		var $contentID = $child.find(".contentID");
+		var contentIDName = "contentNodeID_"+thisSectionPosition + "_" + thisSectionContentCounter;
+		$contentID.attr("name", contentIDName);
+		if ($child.hasClass("textSubmission")){
+			var $thisTextarea = $child.find("textarea");
+			var newName = "text_section_content_"+thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisTextarea.attr("name", newName);
+			var $thisContentType = $child.find(".contentType");
+			var contentTypeName = "contentType_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisContentType.attr("name", contentTypeName);
+		}
+		else if($child.hasClass("imageSubmission")){
+			var $thisContentType = $child.find(".contentType");
+			var contentTypeName = "contentType_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisContentType.attr("name", contentTypeName);
+			var $thisLocalSubmit = $child.find(".imageInputLocalSource");
+			var localSubmitNewName = "imageInputLocalSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLocalSubmit.attr("name", localSubmitNewName);
+			var $thisLinkSubmit = $child.find(".imageInputLinkSource");
+			var linkSubmitNewName = "imageInputLinkSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLinkSubmit.attr("name", linkSubmitNewName);
+			var $thisLabbookSubmit = $child.find(".imageInputLabbookSource");
+			var labbookSubmitNewName = "imageInputLabbookSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLabbookSubmit.attr("name", labbookSubmitNewName );
+		}
+		else if($child.hasClass("timelikeSubmission")){
+			var $thisContentType = $child.find(".contentType");
+			var contentTypeName = "contentType_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisContentType.attr("name", contentTypeName);
+			var $thisLocalSubmit = $child.find(".timelikeInputLocalSource");
+			var localSubmitNewName = "timelikeInputLocalSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLocalSubmit.attr("name", localSubmitNewName);
+			var $thisLinkSubmit = $child.find(".timelikeInputLinkSource");
+			var linkSubmitNewName = "timelikeInputLinkSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLinkSubmit.attr("name", linkSubmitNewName);
+			var $thisLabbookSubmit = $child.find(".timelikeInputLabbookSource");
+			var labbookSubmitNewName = "timelikeInputLabbookSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLabbookSubmit.attr("name", labbookSubmitNewName );
+		}
+		else if($child.hasClass("dataSubmission")){
+			var $thisContentType = $child.find(".contentType");
+			var contentTypeName = "contentType_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisContentType.attr("name", contentTypeName);
+			var $thisLabbookSubmit = $child.find(".dataInputLabbookSource");
+			var labbookSubmitNewName = "dataInputLabbookSource_section_content_"+ thisSectionPosition +"_"+thisSectionContentCounter;
+			$thisLabbookSubmit.attr("name", labbookSubmitNewName );
+		}
+		
+	}
+	
+	//Sets up the buttons for images
+	$("#publishForm").on("click", ".btn-upload", function(){
+		var $thisParent = $(this).parents(".contentInputContainer");
+		$thisParent.find(".localSourceSubmission").show();
+		$thisParent.find(".linkSourceSubmission").hide();
+		$thisParent.find(".labbookSourceSubmission").hide();
+		$thisParent.find(".inputLinkSource").val("");
+		var $thisAlsoNeedsReset = $thisParent.find(".inputLabbookSource");
+		$thisAlsoNeedsReset.prop('selectedIndex',0);
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+	});
+	
+	$("#publishForm").on("click", ".btn-link", function(){
+		var $thisParent = $(this).parents(".contentInputContainer");
+		$thisParent.find(".localSourceSubmission").hide();
+		$thisParent.find(".linkSourceSubmission").show();
+		$thisParent.find(".labbookSourceSubmission").hide();
+		var $thisNeedsReset = $thisParent.find(".inputLocalSource");
+		$thisNeedsReset.replaceWith( $thisNeedsReset = $thisNeedsReset.clone(true) );
+		var $thisAlsoNeedsReset = $thisParent.find(".inputLabbookSource");
+		$thisAlsoNeedsReset.prop('selectedIndex',0);
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+	});
+	
+	$("#publishForm").on("click", ".btn-labbook", function(){
+		var $thisParent = $(this).parents(".contentInputContainer");
+		$thisParent.find(".localSourceSubmission").hide();
+		$thisParent.find(".linkSourceSubmission").hide();
+		$thisParent.find(".labbookSourceSubmission").show();
+		var $thisNeedsReset = $thisParent.find(".inputLocalSource");
+		$thisNeedsReset.replaceWith( $thisNeedsReset = $thisNeedsReset.clone(true) );
+		$thisParent.find(".inputLinkSource").val("");
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+	});
+	
+	//sets up dataset buttons
+	$("#publishForm").on("click", ".btn-labbook-data", function(){
+		var $thisParent = $(this).parents(".contentInputContainer");
+		$thisParent.find(".manualSubmission").hide();
+		$thisParent.find(".labbookSourceSubmission").show();
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+	});
+	
+	$("#publishForm").on("click", ".btn-manual-data", function(){
+		var $thisParent = $(this).parents(".contentInputContainer");
+		$thisParent.find(".manualSubmission").show();
+		$thisParent.find(".labbookSourceSubmission").hide();
+		var $thisNeedsReset = $thisParent.find(".inputLabbookSource");
+		$thisNeedsReset.prop('selectedIndex',0);
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+	});
+	
+	//Hides the pulbish form helper menu.
+	$(".publishFormHelperMenu").hide();
+	//A function to bind the helper menu.
+	{% include '_user/helperMenuFunction.js' %}
+	//Add New Section
+	$("#addNewSection").on('click', function(){
+		var $this = $(this);
+		$(".sectionSubmission").last().after('<div class="sectionSubmission"><div class="sectionTitleSubmission input-group"><input class="sectionTitleInput form-control" name="section_title_'+ sectionCounter +'" type="text" placeholder="Section Title"><span class="input-group-btn"><button type="button" class="btn btn-publish-deleteSection">Delete This Section</button></span></div><div class="emptyContentContainer">Click to Add Content Here</div><div class="hiddenFields""><input type="hidden" class="class_numberOfContentSections" id="id_numberOfContentSections_'+ sectionCounter +'" name="numberOfContentSections_'+ sectionCounter +'" value=0><input type="hidden" class="class_sectionPosition" name="sectionPosition" value='+ sectionCounter +'></div></div>');
+		sectionCounter++;
+		
+		
+		$("#input_numberOfSections").val(sectionCounter);
+		//positionNewSectionButton();
+				
+	});
+	
+	//positions and binds the helper form
+	$("#publishForm").on('click', '.emptyContentContainer', function(){
+		if ($focusedEmptyContainer != null){
+			if ($focusedEmptyContainer.is($(this))){
+				$(".publishFormHelperMenu").toggle();
+			}
+			else {
+				$focusedEmptyContainer = $(this);
+				$focusedEmptyContainer.after($(".publishFormHelperMenu"));
+				
+				
+				$(".publishFormHelperMenu").unbind();
+				helperMenuFunction($focusedEmptyContainer);
+				$(".publishFormHelperMenu").show();
+			}
+		}	
+		else {
+			$focusedEmptyContainer = $(this);
+			$focusedEmptyContainer.after($(".publishFormHelperMenu"));
+			
+			
+			$(".publishFormHelperMenu").unbind();
+			helperMenuFunction($focusedEmptyContainer);
+			$(".publishFormHelperMenu").show();
+		}
+	 });
+	
+	//moves a content section up if possible.
+	$("#publishForm").on('click', '.btn-move-up', function(){
+		var $thisParent = $(this).parents('.contentInputContainer');
+		
+		if ($thisParent.prevAll('.contentInputContainer').length > 0){
+			
+			var $prevContent = $thisParent.prevAll('.contentInputContainer').first();
+			
+			$prevContent.before($thisParent);
+			$prevContent.next().after($prevContent);
+			var thisSectionPosition = $thisParent.parents(".sectionSubmission").find(".class_sectionPosition").val();
+			var thisSectionContentCounter = 0;
+			$thisParent.parents(".sectionSubmission").find(".contentInputContainer").each(function(){
+				nameSetterFunction(this, thisSectionPosition, thisSectionContentCounter);
+				thisSectionContentCounter++;
+			});
+			//positionNewSectionButton();
+			//positionPublishFormHelperMenu();
+			//$(".publishFormHelperMenu").hide();
+			$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter);
+			
+		}
+	});
+	
+	//moves a content section down if possible.
+	$("#publishForm").on('click', '.btn-move-down', function(){
+		var $thisParent = $(this).parents('.contentInputContainer');
+		
+		if ($thisParent.nextAll('.contentInputContainer').length > 0){
+			
+			var $nextContent = $thisParent.nextAll('.contentInputContainer').first();
+			
+			$nextContent.after($thisParent);
+			$nextContent.prev().before($nextContent);
+			var thisSectionPosition = $thisParent.parents(".sectionSubmission").find(".class_sectionPosition").val();
+			var thisSectionContentCounter = 0;
+			$thisParent.parents(".sectionSubmission").find(".contentInputContainer").each(function(){
+				nameSetterFunction(this, thisSectionPosition, thisSectionContentCounter);
+				thisSectionContentCounter++;
+			});
+			//positionNewSectionButton();
+			//positionPublishFormHelperMenu();
+			//$(".publishFormHelperMenu").hide();
+			$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter);
+			
+		}
+	});
+
+	//moves a content section down if possible.
+	$("#publishForm").on('click', '.btn-delete', function(){
+		var $thisParent = $(this).parents('.contentInputContainer');
+		
+		if ($thisParent.next().is($focusedEmptyContainer)){
+			$thisParent.prev().remove();	
+		} 
+		else {
+			$thisParent.next().remove();
+		}
+		
+		var thisSectionPosition = $thisParent.parents(".sectionSubmission").find(".class_sectionPosition").val();
+		var thisSectionContentCounter = 0;
+		$thisParent.parents(".sectionSubmission").find(".contentInputContainer").each(function(){
+			if(!$(this).is($thisParent)){
+			nameSetterFunction(this, thisSectionPosition, thisSectionContentCounter);
+			thisSectionContentCounter++;
+			}
+			
+		});
+		//positionNewSectionButton();
+		//positionPublishFormHelperMenu();
+		//$(".publishFormHelperMenu").hide();
+		$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter);
+		if ($thisParent.find(".contentID").length > 0){
+			$("#input_numberOfSections").after('<input type="hidden" class="deletedNodes"  name="deletedNodes" value="'+$thisParent.find(".contentID").val() +'" >');
+		}
+		$thisParent.remove();	
+		
+	});
+	
+	//Deletes a section and renames remaining sections.
+	$('#publishForm').on('click','.btn-publish-deleteSection',function(){
+		var $this1 = $(this);
+		if (sectionCounter > 1){
+			if ($this1.parents(".sectionSubmission").find(".publishFormHelperMenu").length > 0){
+				$(".publishFormContainer").after($(".publishFormHelperMenu"));
+				$(".publishFormHelperMenu").unbind().hide();
+			}
+			if($this1.parents(".sectionSubmission").find(".sectionID").length > 0){
+				$(".rootID").after('<input type="hidden" class="deletedNodes"  name="deletedNodes" value="'+$this1.parents(".sectionSubmission").find(".sectionID").val() +'" >');
+			}
+			$this1.parents(".sectionSubmission").remove();
+			
+			var thisSectionPosition = 0;
+			$(".sectionSubmission").each(function(){
+				var $this = $(this);
+				var newTitleInputName = "section_title_" + thisSectionPosition;
+				$this.find(".sectionTitleInput").attr("name", newTitleInputName);
+				$this.find(".class_sectionPosition").val(thisSectionPosition);
+				var thisSectionContentCounter = 0;
+				$this.find(".contentInputContainer").each(function(){
+					nameSetterFunction(this, thisSectionPosition, thisSectionContentCounter);
+					thisSectionContentCounter++;
+				});
+				var newNumberOfContentSectionsName = "numberOfContentSections_" + thisSectionPosition;
+				$this.find(".class_numberOfContentSections").attr("name", newNumberOfContentSectionsName).val(thisSectionContentCounter);
+				var newSectionID = "sectionNodeID_" + thisSectionPosition;
+				$this.find(".sectionID").attr("name", newSectionID);
+				thisSectionPosition++;
+			});
+			
+			sectionCounter--;
+			
+			
+			$("#input_numberOfSections").val(sectionCounter);
+		}
+	});			
+	
+});
+</script>	
+{% endblock %}
+
+
+{% block content %}
+<div class="publishFormContainer">
+
+	<div class="publishFormSubmission">
+		<div class="publishFormMenuContainer">
+			<div class="publishFormHelperMenu">
+				<button type="button" id="textContentButton" class="btn btn-text btn-publish-menu big" title="Add a new Paragraph">&para;</button>
+				<button type="button" id="imageContentButton" class="btn btn-picture btn-publish-menu" title="Add a new Image"><i class="icon-picture"></i></button>
+				<button type="button" id="videoContentButton" class="btn btn-timelike btn-publish-menu" title="Add a new Video"><i class="icon-film"></i></button>
+				<button type="button" id="dataContentButton" class="btn btn-data btn-publish-menu" title="Add a new Dataset"><i class="icon-bar-chart"></i></button>
+			</div>
+		</div>
+		<form id="publishForm" action={% url 'userCommentEditSubmit' %} method="post" enctype="multipart/form-data">
+			{% csrf_token %}{{ publishForm.non_field.errors }}
+			<div class="titleSubmission">
+				{{ publishForm.publishFormTitle.errors }}
+				<div class="titleInputContainer">
+					{{ publishForm.publishFormTitle }}
+				</div>
+			</div>
+			<div class="tagSubmission">	
+				{{ publishForm.publishFormTag.errors }}
+				<div class="tagInputContainer">
+					<div class="input-prepend">
+						<span class="add-on"><i class="icon-tags"></i></span>
+						{{ publishForm.publishFormTag }}
+					</div>
+				</div>
+			</div>
+			<div class="hiddenFields">
+				<input id="input_numberOfSections" type="hidden" name="numberOfSections" value=1 >
+				<input type="hidden" class="parentID" name="parentID" value={{ node.parent.id }}>
+			
+			</div>
+			{% recursetree nodes %}
+				{% if node.isTypeNone %}
+					<div class="sectionSubmission">
+						<div class="emptyContentContainer">Click to Add Content Here</div>
+						{{ children }}
+						<div class="hiddenFields">
+							<input type="hidden" class="class_numberOfContentSections" id="id_numberOfContentSections_0" name="numberOfContentSections_0" value={{ node.childrenCount }}>
+							<input type="hidden" class="class_sectionPosition" name="sectionPosition" value=0>
+							<input type="hidden" class="sectionID" name="sectionNodeID_0" value="{{ node.id }}" >
+							
+						</div>
+					</div>
+				{% elif node.isTypeParagraph %}
+					<div class="contentInputContainer">
+						<div class="textSubmission">
+							<div class="textInputContainer">
+								<textarea class="form-control" rows="10" name="text_section_content_0_{{ node.position }}">{{ node.content_object.text }}</textarea>
+							</div>
+							<div class="hiddenFields">
+								<input type="hidden" class="contentType" value="textContent" name="contentType_section_content_0_{{ node.position }}">
+								<input type="hidden" class="contentID" name="contentNodeID_0_{{ node.position }}" value="{{ node.id }}">
+							</div>	
+						</div>
+						<div class="edittingButtonsContainer">
+							<button type="button" class="btn btn-move-up">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-move-down">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-delete">
+								<i class="icon-remove"></i>
+							</button>
+						</div>
+					</div>
+					<div class="emptyContentContainer">Click to Add Content Here</div>
+				{% elif node.isTypeImage %}
+					<div class="contentInputContainer">
+						<div class="imageSubmission">
+							<div class="imageInputContainer">
+								<div class="variableHeader">
+									<h3>Insert Image</h3>
+									<div class="selectSource">
+										<button type="button" class="btn btn-upload">From File</button>
+										<button type="button" class="btn btn-link">From a URL</button>
+										{% if labbook_imageNode_list %}<button type="button" class="btn btn-labbook">From Labbook</button>{% endif %}
+									</div>
+								</div>
+								<div class="localSourceSubmission" {% if node.content_object.originalStructureNode.isLabnote or not node.content_object.isLocalSource %}style="display: none;"{% endif %}>
+									<div class="localSourceInputContainer" >
+										{% if node.content_object.isLocalSource %}<p>Currently: <a href={{ node.content_object.localSource.url }}>{{ node.content_object.localSource.name }}</a></p>{% endif %}
+										<input class="imageInputLocalSource inputLocalSource" type="file" name="imageInputLocalSource_section_content_0_{{ node.position }}">
+									</div>
+								</div>
+								<div class="linkSourceSubmission" {% if node.content_object.originalStructureNode.isLabnote or not node.content_object.isLinkSource %}style="display: none;"{% endif %}>
+									<div class="linkSourceInputContainer">
+										<input id="id_imageFormLinkSource" class="imageInputLinkSource inputLinkSource" name="imageInputLinkSource_section_content_0_{{ node.position }}" placeholder="Enter URL of an image." type="text" value="{{ node.content_object.linkSource }}" />
+									</div>
+								</div>
+								{% if labbook_imageNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="imageInputLabbookSource inputLabbookSource" id="id_imageFormLabbookSource" name="imageInputLabbookSource_section_content_0_{{ node.position }}"><option value="">---------</option>{% for imageNode in labbook_imageNode_list %}<option value="{{ imageNode.object_id }}" {% if imageNode.object_id == node.object_id %}selected="selected"{% endif %}>{{ imageNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
+								<div class="hiddenfield">
+									<input type="hidden" class="contentType" value="imageContent" name="contentType_section_content_0_{{ node.position }}">
+									<input type="hidden" class="contentID" name="contentNodeID_0_{{ node.position }}" value="{{ node.id }}">
+								</div>
+							</div>
+						</div>
+						<div class="edittingButtonsContainer">
+							<button type="button" class="btn btn-move-up">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-move-down">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-delete">
+								<i class="icon-remove"></i>
+							</button>
+						</div>
+					</div>
+					<div class="emptyContentContainer">Click to Add Content Here</div>
+				{% elif node.isTypeTimelike %}
+					<div class="contentInputContainer">
+						<div class="timelikeSubmission">
+							<div class="timelikeInputContainer">
+								<div class="variableHeader">
+									<h3>Insert Video</h3>
+									<div class="selectSource">
+										<button type="button" class="btn btn-upload">From File</button>
+										<button type="button" class="btn btn-link">From a URL</button>
+										{% if labbook_timelikeNode_list %}<button type="button" class="btn btn-labbook">From Labbook</button>{% endif %}
+									</div>
+								</div>
+								<div class="localSourceSubmission" {% if node.content_object.originalStructureNode.isLabnote or not node.content_object.isLocalSource %}style="display: none;"{% endif %}>
+									<div class="localSourceInputContainer" >
+										{% if node.content_object.isLocalSource %}<p>Currently: <a href={{ node.content_object.localSource.url }}>{{ node.content_object.localSource.name }}</a></p>{% endif %}
+										<input class="timelikeInputLocalSource inputLocalSource" type="file" name="timelikeInputLocalSource_section_content_0_{{ node.position }}">
+									</div>
+								</div>
+								<div class="linkSourceSubmission" {% if node.content_object.originalStructureNode.isLabnote or not node.content_object.isLinkSource %}style="display: none;"{% endif %}>
+									<div class="linkSourceInputContainer">
+										<input id="id_timelikeFormLinkSource" class="timelikeInputLinkSource inputLinkSource" name="timelikeInputLinkSource_section_content_0_{{ node.position }}" placeholder="Enter URL of a video." type="text" value="{{ node.content_object.linkSource }}" />
+									</div>
+								</div>
+								{% if labbook_timelikeNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="timelikeInputLabbookSource inputLabbookSource" id="id_timelikeFormLabbookSource" name="timelikeInputLabbookSource_section_content_0_{{ node.position }}"><option value="">---------</option>{% for timelikeNode in labbook_timelikeNode_list %}<option value="{{ timelikeNode.object_id }}" {% if timelikeNode.object_id == node.object_id %}selected="selected"{% endif %}>{{ timelikeNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
+								<div class="hiddenfield">
+									<input type="hidden" class="contentType" value="timelikeContent" name="contentType_section_content_0_{{ node.position }}">
+									<input type="hidden" class="contentID" name="contentNodeID_0_{{ node.position }}" value="{{ node.id }}">
+								</div>
+							</div>
+						</div>
+						<div class="edittingButtonsContainer">
+							<button type="button" class="btn btn-move-up">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-move-down">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-delete">
+								<i class="icon-remove"></i>
+							</button>
+						</div>
+					</div>
+					<div class="emptyContentContainer">Click to Add Content Here</div>
+				{% elif node.isTypeDataset %}
+					
+					<div class="contentInputContainer">
+						<div class="dataSubmission">
+							<div class="dataInputContainer">
+								<div class="variableHeader">
+									<h3>Submit Data</h3>
+									{% if labbook_dataNode_list %}<div class="selectSource"><button type="button" class="btn btn-manual-data">Manually</button><button type="button" class="btn btn-labbook-data">From Labbook</button></div>{% else %}<p>No Data Sets Found!</p>{% endif %}
+								</div>
+								<div class="manualSubmission" {% if node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}>
+									<div class="manualInputContainer" ></div>
+								</div>
+								{% if labbook_dataNode_list %}<div class="labbookSourceSubmission" {% if not node.content_object.originalStructureNode.isLabnote %}style="display: none;"{% endif %}><div class="labbookSourceInputContainer"><select class="dataInputLabbookSource inputLabbookSource" name="dataInputLabbookSource_section_content_0_{{ node.position }}"><option value="" >---------</option>{% for dataNode in labbook_dataNode_list %}<option value="{{ dataNode.object_id }}" {% if dataNode.object_id == node.object_id %}selected="selected"{% endif %}>{{ dataNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
+							</div>
+							<div class="hiddenfield">
+								<input type="hidden" class="contentType" value="dataContent" name="contentType_section_content_0_{{ node.position }}">
+								<input type="hidden" class="contentID" name="contentNodeID_0_{{ node.position }}" value="{{ node.id }}">
+							</div>
+						</div>
+						<div class="edittingButtonsContainer">
+							<button type="button" class="btn btn-move-up">
+								<i class="icon-arrow-up"></i>
+							</button>
+							<button type="button" class="btn btn-move-down">
+								<i class="icon-arrow-down"></i>
+							</button>
+							<button type="button" class="btn btn-delete">
+								<i class="icon-remove"></i>
+							</button>
+						</div>
+					</div>							
+					<div class="emptyContentContainer">Click to Add Content Here</div>		
+				{% endif %}
+			{% endrecursetree %}
+			
+			
+<!--
+			<div class="contentInputContainer">
+				<div class="imageSubmission">
+					<div class="imageInputContainer">
+						<div class="variableHeader">
+							<h3>Insert Image</h3>
+							<div class="selectSource">
+								<button type="button" class="btn btn-upload">From File</button>
+								<button type="button" class="btn btn-link">From a URL</button>
+								{% if labbook_imageNode_list %}<button type="button" class="btn btn-labbook">From Labbook</button>{% endif %}
+							</div>
+						</div>
+						<div class="localSourceSubmission">
+							<div class="localSourceInputContainer">
+								<input class="imageInputLocalSource inputLocalSource" id="id_imageFormLocalSource" type="file" />
+								</div>
+								</div>
+								<div class="linkSourceSubmission">
+									<div class="linkSourceInputContainer">
+										<input id="id_imageFormLinkSource" class="imageInputLinkSource inputLinkSource" placeholder="Enter URL of image." type="text" />
+										</div>
+										</div>
+										{% if labbook_imageNode_list %}<div class="labbookSourceSubmission"><div class="labbookSourceInputContainer"><select class="imageInputLabbookSource inputLabbookSource" id="id_imageFormLabbookSource" ><option value="" selected="selected">---------</option>{% for imageNode in labbook_imageNode_list %}<option value="{{ imageNode.object_id }}">{{ imageNode.title }}</option>{% endfor %}</select></div></div>{% endif %}
+										</div>
+										<div class="hiddenfield">
+											<input type="hidden" class="contentType" value="imageContent">
+										</div>
+									</div>
+								<div class="edittingButtonsContainer">
+							<button type="button" class="btn btn-move-up"><i class="icon-arrow-up"></i></button><button type="button" class="btn btn-move-down"><i class="icon-arrow-down"></i></button><button type="button" class="btn btn-delete"><i class="icon-remove"></i></button></div></div>
+			-->
+
+			
+
+			<button id="publishFormButton" type="submit" class="btn btn-primary">Submit</button>
+		</form>		
+	</div>
+		
+</div>
+
+{% endblock %}
+
+
+

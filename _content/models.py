@@ -73,10 +73,14 @@ class StructureNode(MPTTModel):
         if self.isTypeImage():
             return self.content_object
         else:
-            for child in self.get_descendants():
+            for child in self.get_children():
                 if child.isTypeImage():
                     return child.content_object
                     break
+                for grandchild in child.get_children():
+                    if grandchild.isTypeImage():
+                        return grandchild.content_object
+                        break
             for predecessor in self.get_ancestors():
                 if predecessor.isTypeImage():
                     return predecessor.content_object
@@ -133,9 +137,6 @@ class StructureNode(MPTTModel):
     def childrenCount(self):
         number = self.get_children().count()
         return number
-    
-    class Meta:
-        unique_together = ('parent', 'position')
         
     class MPTTMeta:
         level_attr = 'mptt_level'

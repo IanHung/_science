@@ -228,7 +228,7 @@ def userArticleDelete(request):
     
 @login_required
 def userComment(request):
-    all_article_list = StructureNode.objects.filter(Q(mptt_level=3)|Q(isUpdate=True)).filter(author=request.user, isComment=True).exclude(rating__isnull=True).order_by('-pubDate')
+    all_article_list = StructureNode.objects.filter(Q(mptt_level=3)|Q(isUpdate=True)).filter(author=request.user, isComment=True).order_by('-pubDate')
     paginator = Paginator(all_article_list, 25) # Show 25 contacts per page
     
     page = request.GET.get('page')
@@ -245,6 +245,163 @@ def userComment(request):
         page = paginator.num_pages
             
     return render(request, '_user/userCommentMain.html', {'top_article_list':top_article_list})
+
+@login_required
+def userCommentEditSubmit(request):
+    deleteList = filter(None, request.POST.getlist('deletedNodes'))
+    if deleteList:
+        for nodeIndex in deleteList:
+            tempDeleteItem = StructureNode.objects.get(id=nodeIndex, author=request.user)
+            tempDeleteItem.delete()
+    publishForm = PublishForm()
+    if (request.method == 'POST'):
+        print(request.POST)
+        publishForm = PublishForm(request.POST)
+        if (publishForm.is_valid()):
+            commentNode = StructureNode.objects.get(id=int(request.POST['sectionNodeID_0']), author=request.user)
+            commentNode.title = publishForm.cleaned_data['publishFormTitle']
+            commentNode.save()
+            commentNode.tag_set.clear()
+            tagList = hashTagParser(publishForm.cleaned_data['publishFormTag'])
+            restrictedTagListSave(request, commentNode, tagList) 
+            for contentNodeIndex in range(0, int(request.POST['numberOfContentSections_0'])):
+                tempContentNodeData = {'title': publishForm.cleaned_data['publishFormTitle'] +"_content_"+str(contentNodeIndex)}
+                if (request.POST.get('contentNodeID_0' +'_'+str(contentNodeIndex), False)):
+                    contentNodeInstance = StructureNode.objects.get(id=int(request.POST['contentNodeID_0' +'_'+str(contentNodeIndex)]), author=request.user)
+                    contentNodeForm = StructureNodeTitleForm(tempContentNodeData, instance=contentNodeInstance)
+                else:
+                    contentNodeForm = StructureNodeTitleForm(tempContentNodeData)
+                if contentNodeForm.is_valid():
+                    contentNode = contentNodeForm.save(commit=False)
+                    contentNode.parent = commentNode
+                    contentNode.author = request.user
+                    contentNode.isComment = True
+                    contentNode.position = contentNodeIndex
+                    
+                    if (request.POST['contentType_section_content_0'+"_"+str(contentNodeIndex)] == "textContent"):
+                        tempParagraph = Paragraph()
+                        tempParagraph.text = request.POST['text_section_content_0'+"_"+str(contentNodeIndex)]
+                        tempParagraphDict = model_to_dict(tempParagraph)
+                        if (request.POST.get('contentNodeID_0' +'_'+str(contentNodeIndex), False)):
+                            paragraphFormInstance = StructureNode.objects.get(id=int(request.POST['contentNodeID_0' +'_'+str(contentNodeIndex)]), author=request.user).content_object
+                            paragraphForm = ParagraphForm(tempParagraphDict, instance=paragraphFormInstance)
+                        else:
+                            paragraphForm = ParagraphForm(tempParagraphDict)
+                        if paragraphForm.is_valid():
+                            tempParagraph = paragraphForm.save()
+                        contentNode.content_type = ContentType.objects.get_for_model(Paragraph)
+                        contentNode.object_id = tempParagraph.id                        
+                        contentNode.save()
+                    elif (request.POST['contentType_section_content_0'+"_"+str(contentNodeIndex)] == "imageContent"):
+                        contentNode.content_type = ContentType.objects.get_for_model(Image)
+                        if (request.POST.get('imageInputLinkSource_section_content_0'+"_"+str(contentNodeIndex))):
+                            tempImage = Image()
+                            tempImage.linkSource = request.POST['imageInputLinkSource_section_content_0'+"_"+str(contentNodeIndex)]
+                            tempImageDict=model_to_dict(tempImage)
+                            if (request.POST.get('contentNodeID_0' +'_'+str(contentNodeIndex), False)):
+                                imageFormInstance = StructureNode.objects.get(id=int(request.POST['contentNodeID_0' +'_'+str(contentNodeIndex)]), author=request.user).content_object
+                                imageFormInstance.localSource = None
+                                imageFormInstance.save()
+                                imageForm = ImageForm(tempImageDict, instance=imageFormInstance)
+                                print("Ian menghung")
+                            else:
+                                imageForm = ImageForm(tempImageDict)
+                            if imageForm.is_valid():
+                                tempImage = imageForm.save()
+                                print("working")
+                            else:
+                                tempImage = imageFormInstance
+                                print(imageForm.errors)
+                                print("not working")
+                            contentNode.object_id = tempImage.id
+                            
+                        elif (request.FILES.get('imageInputLocalSource_section_content_0'+"_"+str(contentNodeIndex))):
+                            if (request.POST.get('contentNodeID_0' +'_'+str(contentNodeIndex), False)):
+                                tempImage = StructureNode.objects.get(id=int(request.POST['contentNodeID_0' +'_'+str(contentNodeIndex)]), author=request.user).content_object
+                                tempImage.linkSource=None
+                                print("Ian menghung2")
+                            else:
+                                tempImage = Image()
+                                print("Ian menghung23")
+                            tempImage.localSource = request.FILES['imageInputLocalSource_section_content_0'+"_"+str(contentNodeIndex)]
+                            tempImage.save()
+                            contentNode.object_id = tempImage.id
+                            
+                        elif (request.POST.get('imageInputLabbookSource_section_content_0'+"_"+str(contentNodeIndex))):
+                            contentNode.object_id = int(request.POST['imageInputLabbookSource_section_content_0'+"_"+str(contentNodeIndex)])
+                            
+                        contentNode.save()
+                    elif (request.POST['contentType_section_content_0'+"_"+str(contentNodeIndex)] == "timelikeContent"):
+                        contentNode.content_type = ContentType.objects.get_for_model(Timelike)
+                        if (request.POST.get('timelikeInputLinkSource_section_content_0'+"_"+str(contentNodeIndex))):
+                            tempTimelike = Timelike()
+                            tempTimelike.linkSource = request.POST['timelikeInputLinkSource_section_content_0'+"_"+str(contentNodeIndex)]
+                            tempTimelike.localSource = None
+                            tempTimelikeDict = model_to_dict(tempTimelike)
+                            if (request.POST.get('contentNodeID_0' +'_'+str(contentNodeIndex), False)):
+                                timelikeFormInstance = StructureNode.objects.get(id=int(request.POST['contentNodeID_0' +'_'+str(contentNodeIndex)]), author=request.user).content_object
+                                timelikeForm = TimelikeForm(tempTimelikeDict, instance=timelikeFormInstance)
+                            else:
+                                timelikeForm = TimelikeForm(tempTimelikeDict)
+                            if timelikeForm.is_valid():
+                                tempTimelike = timelikeForm.save()
+                            contentNode.object_id = tempTimelike.id
+                            
+                        elif (request.FILES.get('timelikeInputLocalSource_section_content_0'+"_"+str(contentNodeIndex))):
+                            if (request.POST.get('contentNodeID_0'+'_'+str(contentNodeIndex), False)):
+                                tempTimelike = StructureNode.objects.get(id=int(request.POST['contentNodeID_0' +'_'+str(contentNodeIndex)]), author=request.user).content_object
+                                tempTimelike.linkSource=None
+                            else:
+                                tempTimelike = Timelike()
+                            tempTimelike.localSource = request.FILES['timelikeInputLocalSource_section_content_0'+"_"+str(contentNodeIndex)]
+                            tempTimelike.save()
+                            contentNode.object_id = tempTimelike.id
+                            
+                        elif (request.POST.get('timelikeInputLabbookSource_section_content_0'+"_"+str(contentNodeIndex))):
+                            contentNode.object_id = int(request.POST['timelikeInputLabbookSource_section_content_0'+"_"+str(contentNodeIndex)])
+                            
+                        contentNode.save()
+                    elif (request.POST['contentType_section_content_0'+"_"+str(contentNodeIndex)] == "dataContent"):
+                        contentNode.content_type = ContentType.objects.get_for_model(Dataset)
+                        if (request.POST.get('dataInputLabbookSource_section_content_0'+"_"+str(contentNodeIndex))):
+                            contentNode.object_id = int(request.POST['dataInputLabbookSource_section_content_0'+"_"+str(contentNodeIndex)])
+                        contentNode.save()
+                    contentNode.tag_set.clear()
+                    restrictedTagListSave(request, contentNode, tagList) 
+                        
+    return HttpResponseRedirect(reverse('userCommentEdit', args=[commentNode.url,]))
+
+@login_required
+def userCommentEdit(request, comment_url):
+    publishForm = PublishForm()
+    print(comment_url)
+    #creating a tree with ancestors and descendants of a node.
+    try:
+        nodeItem = StructureNode.objects.get(url = comment_url, author=request.user)
+        descList = nodeItem.get_descendants(include_self=True)
+        ancestorList = nodeItem.get_ancestors()
+        #concatenating lists
+        tree_list = ancestorList | descList
+        tree_list = tree_list.filter(isComment=True)
+        root = tree_list.get(mptt_level=3)
+        rootTag = "" 
+        if root.tag_set.all():
+            for tag in root.tag_set.all():
+                rootTag = rootTag + " #" + tag.name
+        publishFormData = {'publishFormTitle': root.title, 'publishFormTag': rootTag}
+        publishForm = PublishForm(publishFormData)
+        if request.user.is_authenticated():
+            labbook_imageNode_list = StructureNode.objects.filter(isLabnote = True, author=request.user, content_type__model='image') #when filtering model must be lower case.
+            labbook_timelikeNode_list = StructureNode.objects.filter(isLabnote = True, author=request.user, content_type__model='timelike')
+            labbook_dataNode_list = StructureNode.objects.filter(isLabnote = True, author=request.user, content_type__model='dataset')
+        else:
+            labbook_imageNode_list = None
+            labbook_timelikeNode_list = None
+            labbook_dataNode_list = None
+    except StructureNode.DoesNotExist:
+        raise Http404
+    
+    return render(request, '_user/userCommentEdit.html', {'nodes':tree_list, 'publishForm':publishForm, 'labbook_imageNode_list': labbook_imageNode_list, 'labbook_timelikeNode_list': labbook_timelikeNode_list, 'labbook_dataNode_list': labbook_dataNode_list, })
 
 @login_required
 def userPublish(request):
