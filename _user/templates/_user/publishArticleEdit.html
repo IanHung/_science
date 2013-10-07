@@ -237,7 +237,7 @@ $(document).ready(function () {
 		//$(".publishFormHelperMenu").hide();
 		$thisParent.parents(".sectionSubmission").find(".class_numberOfContentSections").val(thisSectionContentCounter);
 		if ($thisParent.find(".contentID").length > 0){
-			$(".rootID").after('<input type="hidden" class="deletedNodes"  name="deletedNodes" value="'+$thisParent.find(".contentID").val() +'" >');
+			$("#input_numberOfSections").after('<input type="hidden" class="deletedNodes"  name="deletedNodes" value="'+$thisParent.find(".contentID").val() +'" >');
 		}
 		$thisParent.remove();	
 		
