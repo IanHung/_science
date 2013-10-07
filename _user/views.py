@@ -79,7 +79,7 @@ def userArticleEditSubmit(request):
                 if (request.POST.get('sectionNodeID_'+str(sectionNodeIndex), False)):
                     sectionNodeInstance = StructureNode.objects.get(id=int(request.POST['sectionNodeID_'+str(sectionNodeIndex)]), author=request.user)
                     sectionNodeForm = StructureNodeTitleForm(tempSectionData, instance=sectionNodeInstance)
-                    print('here')
+                    
                 else:
                     sectionNodeForm = StructureNodeTitleForm(tempSectionData)
                 if sectionNodeForm.is_valid():
@@ -228,10 +228,23 @@ def userArticleDelete(request):
     
 @login_required
 def userComment(request):
-
-    comment_list = StructureNode.objects.filter(isPublished = False)
+    all_article_list = StructureNode.objects.filter(Q(mptt_level=3)|Q(isUpdate=True)).filter(author=request.user, isComment=True).exclude(rating__isnull=True).order_by('-pubDate')
+    paginator = Paginator(all_article_list, 25) # Show 25 contacts per page
     
-    return render(request, '_commentGarden/commentgarden.html', {'comment_list': comment_list,}) #'form':CommentForm()})
+    page = request.GET.get('page')
+    try:
+        top_article_list = paginator.page(page)        
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        top_article_list = paginator.page(1)
+        page = "1"
+    
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        top_article_list = paginator.page(paginator.num_pages)
+        page = paginator.num_pages
+            
+    return render(request, '_user/userCommentMain.html', {'top_article_list':top_article_list})
 
 @login_required
 def userPublish(request):
