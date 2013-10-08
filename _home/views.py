@@ -1,7 +1,7 @@
 # Create your views here.
 import json
 from django.shortcuts import render, HttpResponse
-from _content.models import StructureNode, Timelike
+from _content.models import StructureNode, Timelike, Tag
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import Http404
 from django.contrib.auth import authenticate, login, logout
@@ -44,3 +44,7 @@ def about(request):
 
 def contact(request):
     return render(request, '_home/contact.html')
+
+def browse(request):
+    tag_list = Tag.objects.filter(nodes__isPublished=True, nodes__mptt_level=0).distinct()
+    return render(request, '_home/browse.html', {'tag_list':tag_list})

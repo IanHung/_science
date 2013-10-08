@@ -9,6 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
      url(r'^$', '_home.views.home', name='home'),
+     url(r'^browse/', '_home.views.browse', name='browse'),
      url(r'^article/', include('_article.urls')),
      url(r'^subject/', include('_home.urls')),
      url(r'^comment/', include('_commentGarden.urls')),

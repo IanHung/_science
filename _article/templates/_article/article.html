@@ -291,6 +291,9 @@ $(document).ready(function(){
 			{% if not node.is_leaf_node %}
 				{{ children }}
 			{% endif %}
+			<div class="tagList">
+    			{% if node.tag_set.all %}<p>{% for tag in node.tag_set.all %}<a href={% url 'subject' tag.name|urlencode %}>#{{ tag.name }} </a>{% endfor %}</p>{% endif %}
+    		</div>
 		{% endif %}
 			{% if node.isTypeNone and node.isPublished == True and not node.is_root_node %}
 				<div class='articleContainer {{ node.slug }}'>
