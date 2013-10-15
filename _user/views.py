@@ -626,18 +626,39 @@ def userLabbook(request, subject_url=None):
     print(request.POST)
   
     if (subject_url):            
-        labbook_list = subjectURLqueryList(request.user,subject_url)
+        all_labbook_list = subjectURLqueryList(request.user,subject_url)
     else:
-        labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate')                
+        all_labbook_list = StructureNode.objects.filter(isLabnote = True, author=request.user).exclude(content_type = None).order_by('-pubDate')
+    paginator = Paginator(all_labbook_list, 50) # show 50 per page
+    
+    page = request.GET.get('page')
+    try:
+        labbook_list = paginator.page(page)
+    except PageNotAnInteger:
+        labbook_list = paginator.page(1)
+    
+    except EmptyPage:
+        labbook_list = paginator.page(paginator.num_pages)    
+                           
     return render(request, '_user/labbook.html', {'labbook_list': labbook_list, 'textForm': text_form, 'imageForm': image_form, 'timelikeForm':timelike_form,'dataForm': data_form, 'subject_url':subject_url, 'updateForm':update_form}) #'form':CommentForm()})
 
 def userLabbookNameTag(request, user_url, subject_url=None):
     userName = user_url
     user = User.objects.get(username = user_url)
     if (subject_url):            
-        labbook_list = subjectURLqueryList(user,subject_url)
+        all_labbook_list = subjectURLqueryList(user,subject_url)
     else:
-        labbook_list = StructureNode.objects.filter(isLabnote = True, author=user).exclude(content_type = None).order_by('-pubDate')
+        all_labbook_list = StructureNode.objects.filter(isLabnote = True, author=user).exclude(content_type = None).order_by('-pubDate')
+    paginator = Paginator(all_labbook_list, 50) # show 50 per page
+    
+    page = request.GET.get('page')
+    try:
+        labbook_list = paginator.page(page)
+    except PageNotAnInteger:
+        labbook_list = paginator.page(1)
+    
+    except EmptyPage:
+        labbook_list = paginator.page(paginator.num_pages)      
     return render(request, '_user/labbookUser.html', {'labbook_list': labbook_list, 'userName':userName, 'subject_url':subject_url})      
 
 def textFormLabbookSave(request):

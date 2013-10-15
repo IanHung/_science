@@ -672,6 +672,23 @@ $(document).ready(function () {
 			</div>	
 		</div>	
 	{% endfor %}
+	<div class="pagination">
+    <span class="step-links">
+    	{% if labbook_list.has_previous or labbook_list.has_next %}
+        {% if labbook_list.has_previous %}
+            <a href="?page={{ labbook_list.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ labbook_list.number }} of {{ labbook_list.paginator.num_pages }}.
+        </span>
+
+        {% if labbook_list.has_next %}
+            <a href="?page={{ labbook_list.next_page_number }}">next</a>
+        {% endif %}
+        {% endif %}
+    </span>
+</div>	
 {% endblock %}
 
 
