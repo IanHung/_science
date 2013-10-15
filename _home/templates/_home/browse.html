@@ -4,8 +4,15 @@
 
 {% block content %}
 {% if tag_list %}
+	<div class="row">
 	{% for tag in tag_list %}
-		<p><a href={% url 'subject' tag.name|urlencode %}>#{{ tag.name }} </a></p>
+		
+			<div class="col-sm-3"><a href={% url 'subject' tag.name|urlencode %}>#{{ tag.name }} </a></div>
+		{% if forloop.counter|divisibleby:"12" %}
+		</div>
+		<div class="row">
+		{% endif %}
 	{% endfor %}
+		</div>
 {% endif %}
 {% endblock %}

@@ -29,6 +29,9 @@ def submitComment(request):
             commentNode.isComment = True
             commentNode.position = getPositionForComments(request)
             commentNode.save()
+            commentNode.subscribedUser.add(commentNode.parent.author)
+            commentNode.subscribedUser.add(commentNode.author)
+            commentNode.save()
             restrictedTagListSave(request, commentNode, tagList) 
             for contentNodeIndex in range(0, int(request.POST['numberOfContentSections_'+str(0)])):
                 tempContentData = {'title': request.POST['publishFormTitle'] +"_content_"+str(contentNodeIndex)}

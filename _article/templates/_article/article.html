@@ -301,7 +301,9 @@ $(document).ready(function(){
 						{% ifchanged node.pubDate|date %}<h5>{{node.pubDate|date}}</h5>{% endifchanged %}
 						
 						{% if node.author %}
-						<h5>{{node.author.name}}</h5>
+						{% ifchanged node.author %}
+						<h5>{{ node.author.username}}</h5>
+						{% endifchanged %}
 						{% endif %}
 					</div>
 					
@@ -400,7 +402,7 @@ $(document).ready(function(){
 						<h5>{{node.pubDate|date}}</h5>
 						<h5>{{node.title}}</h5>
 						{% if node.author %}
-						<h5>{{node.author.name}}</h5>
+						<h5>{{node.author.username}}</h5>
 						{% endif %}
 					</div>
 					

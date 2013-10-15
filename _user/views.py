@@ -18,10 +18,10 @@ from django.forms import model_to_dict
 @login_required
 def userDashboard(request):
                         
-    top_article_list = get_queryset_descendants(StructureNode.objects.exclude(rating__isnull=True).order_by('-rating__rating').filter(subscribedUser=request.user)).filter(content_type=None).filter(isPublished=True)
+    top_article_list = get_queryset_descendants(StructureNode.objects.filter(subscribedUser=request.user)).filter(content_type=None).exclude(mptt_level=1).order_by('-pubDate')
     
     
-    return render(request, '_home/home2.html', {'top_article_list':top_article_list})
+    return render(request, '_user/dashboard.html', {'top_article_list':top_article_list})
 
 
 @login_required
@@ -418,6 +418,8 @@ def userPublish(request):
             experimentNode.author = request.user
             experimentNode.isPublished = True
             experimentNode.position = getPositionForRoots()
+            experimentNode.save()
+            experimentNode.subscribedUser.add(request.user)
             experimentNode.save()
             tagList = hashTagParser(publishForm.cleaned_data['publishFormTag'])
             restrictedTagListSave(request, experimentNode, tagList) 
