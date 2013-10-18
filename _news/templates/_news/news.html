@@ -292,7 +292,7 @@ $(document).ready(function(){
 				{{ children }}
 			{% endif %}
 			<div class="tagList">
-    			{% if node.tag_set.all %}<p>{% for tag in node.tag_set.all %}<a href={% url 'subject' tag.name|urlencode %}>#{{ tag.name }} </a>{% endfor %}</p>{% endif %}
+    			{% if node.tag_set.all %}<p>{% for tag in node.tag_set.all %}<a href={% url 'newstag' tag.name|urlencode %}>#{{ tag.name }} </a>{% endfor %}</p>{% endif %}
     		</div>
 		{% endif %}
 			{% if node.isTypeNone and node.isPublished == True and not node.is_root_node %}
@@ -301,9 +301,13 @@ $(document).ready(function(){
 						{% ifchanged node.pubDate|date %}<h5>{{node.pubDate|date}}</h5>{% endifchanged %}
 						
 						{% if node.author %}
-						{% ifchanged node.author %}
+						{% ifchanged node.parent %}
 						<h5>{{ node.author.username}}</h5>
-						{% endifchanged %}
+						{% else %}
+							{% ifchanged node.author %}
+							<h5>{{ node.author.username}}</h5>
+							{% endifchanged %}
+						{% endifchanged %}	
 						{% endif %}
 					</div>
 					
@@ -390,6 +394,23 @@ $(document).ready(function(){
 	    	 
 	
     {% endrecursetree %}
+<div class="pagination">
+    <span class="step-links">
+    	{% if current_article_list.has_previous or current_article_list.has_next %}
+        {% if current_article_list.has_previous %}
+            <a href="?page={{ current_article_list.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ current_article_list.number }} of {{ current_article_list.paginator.num_pages }}.
+        </span>
+
+        {% if current_article_list.has_next %}
+            <a href="?page={{ current_article_list.next_page_number }}">next</a>
+        {% endif %}
+        {% endif %}
+    </span>
+</div>	
     {% endblock %}
     {% block articleSideContent %}
     {% recursetree nodes %}
@@ -526,6 +547,5 @@ $(document).ready(function(){
 	</div>
 	
 </div>
-
 
 {% endblock %}

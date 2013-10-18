@@ -145,6 +145,7 @@ INSTALLED_APPS = (
      '_article',
      '_commentGarden',
      '_user',
+     '_news',
      'storages',
 )
 #Setting up user registration.

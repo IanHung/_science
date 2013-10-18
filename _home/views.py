@@ -1,15 +1,15 @@
 # Create your views here.
 import json
 from django.shortcuts import render, HttpResponse
-from _content.models import StructureNode, Timelike, Tag
+from _content.models import StructureNode, Timelike, Tag, get_queryset_descendants, hashTagParser
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import Http404
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
-
+from _article.forms import PublishForm
 
 def home(request):
-    all_article_list = StructureNode.objects.filter(Q(mptt_level=0)|Q(isUpdate=True)).filter(isPublished=True).exclude(rating__isnull=True).order_by('-rating__rating')
+    all_article_list = StructureNode.objects.filter(Q(mptt_level=0)|Q(isUpdate=True)).filter(isPublished=True).exclude(rating__isnull=True).order_by('-rating__rating').exclude(tag__name__startswith="_science")
     paginator = Paginator(all_article_list, 25) # Show 25 contacts per page
     
     page = request.GET.get('page')
@@ -48,3 +48,4 @@ def contact(request):
 def browse(request):
     tag_list = Tag.objects.filter(nodes__isPublished=True, nodes__mptt_level=0).distinct()
     return render(request, '_home/browse.html', {'tag_list':tag_list})
+

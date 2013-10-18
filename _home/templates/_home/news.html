@@ -15,28 +15,28 @@ $(document).ready(function(){
 		    {% endrecursetree %}
 	
 	{% recursetree nodes %}
-	{% if node.mptt_level == 2 %} var position{{ node.id }} = $(".nodeID_{{ node.id }}").position().top + $(".nodeID_{{ node.id }}").parents('.articleContainer').position().top; 
+	{% if node.mptt_level == 2 %} var position{{ node.id }} = $(".{{ node.slug }}").position().top + $(".{{ node.slug }}").parents('.articleContainer').position().top; 
 	position{{ node.id }} = position{{ node.id }}-10;
-	$(".nodeID_{{ node.id }}CommentContainer").css({
+	$(".{{ node.slug }}CommentContainer").css({
 		 				"position": "relative", 
 		 				"top": position{{ node.id }} + "px"
 		 			});
-	$(".nodeID_{{ node.id }}CommentContainer").hide();	 			
-	$("#nodeID_{{ node.id }}CommentButton").click(function(){
-		 				if($(".nodeID_{{ node.id }}CommentContainer").hasClass('showing'))
+	$(".{{ node.slug }}CommentContainer").hide();	 			
+	$("#{{ node.slug }}CommentButton").click(function(){
+		 				if($(".{{ node.slug }}CommentContainer").hasClass('showing'))
 		 				{
-		 					$(".nodeID_{{ node.id }}CommentContainer").hide().removeClass('showing');
+		 					$(".{{ node.slug }}CommentContainer").hide().removeClass('showing');
 		 					$(".articleSideContainer").height(1);
 		 				}
 		 				else
 		 				{
 		 					$(".showing").hide().removeClass("showing");
-		 					$(".nodeID_{{ node.id }}CommentContainer").show().addClass("showing");
-		 					sideHeight = $(".nodeID_{{ node.id }}CommentContainer").height() + $(".nodeID_{{ node.id }}CommentContainer").position().top;
+		 					$(".{{ node.slug }}CommentContainer").show().addClass("showing");
+		 					sideHeight = $(".{{ node.slug }}CommentContainer").height() + $(".{{ node.slug }}CommentContainer").position().top;
 		 					$(".articleSideContainer").height(sideHeight);
 		 				}
 		 			});
-	$("#nodeID_{{ node.id }}CommentButtonAdd").click(function(){
+	$("#{{ node.slug }}CommentButtonAdd").click(function(){
 		if ($(".publishFormContainer").position().top == position{{ node.id }}){
 			$(".publishFormContainer").toggle();
 		}
@@ -292,18 +292,22 @@ $(document).ready(function(){
 				{{ children }}
 			{% endif %}
 			<div class="tagList">
-    			{% if node.tag_set.all %}<p>{% for tag in node.tag_set.all %}<a href={% url 'subject' tag.name|urlencode %}>#{{ tag.name }} </a>{% endfor %}</p>{% endif %}
+    			{% if node.tag_set.all %}<p>{% for tag in node.tag_set.all %}<a href={% url 'newstag' tag.name|urlencode %}>#{{ tag.name }} </a>{% endfor %}</p>{% endif %}
     		</div>
 		{% endif %}
 			{% if node.isTypeNone and node.isPublished == True and not node.is_root_node %}
-				<div class='articleContainer nodeID_{{ node.id }}'>
+				<div class='articleContainer {{ node.slug }}'>
 					<div class='articleMeta'>
 						{% ifchanged node.pubDate|date %}<h5>{{node.pubDate|date}}</h5>{% endifchanged %}
 						
 						{% if node.author %}
-						{% ifchanged node.author %}
+						{% ifchanged node.parent %}
 						<h5>{{ node.author.username}}</h5>
-						{% endifchanged %}
+						{% else %}
+							{% ifchanged node.author %}
+							<h5>{{ node.author.username}}</h5>
+							{% endifchanged %}
+						{% endifchanged %}	
 						{% endif %}
 					</div>
 					
@@ -316,33 +320,33 @@ $(document).ready(function(){
 	        		
 	        	</div>		
 	    	{% elif node.isTypeParagraph and node.isPublished == True and not node.is_root_node %}
-	    		<div class='contentContainer nodeID_{{ node.id }}'>       
+	    		<div class='contentContainer {{ node.slug }}'>       
 	        	   <p>
 	        	   {{ node.content_object.text }}</p>
-	        	   <button type="button" class="btn btn-comment articleCommentPosition" id="nodeID_{{ node.id }}CommentButton">{{ node.commentCount }}</button>
-	        	   <button type="button" class="btn btn-comment articleAddCommentPosition" id="nodeID_{{ node.id }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
+	        	   <button type="button" class="btn btn-comment articleCommentPosition" id="{{ node.slug }}CommentButton">{{ node.commentCount }}</button>
+	        	   <button type="button" class="btn btn-comment articleAddCommentPosition" id="{{ node.slug }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
 	        	</div>
 	    	{% elif node.isTypeImage and node.isPublished == True and not node.is_root_node %}
-	    		<div class='contentContainer nodeID_{{ node.id }}'>  	
+	    		<div class='contentContainer {{ node.slug }}'>  	
 		    		
 		    		{% if node.isPublished == True %}
-		    			<div class='contentContainerImage nodeID_{{ node.id }}'><img src={{ node.content_object.getImageURL }} alt="" /></div>
+		    			<div class='contentContainerImage {{ node.slug }}'><img src={{ node.content_object.getImageURL }} alt="" /></div>
 		    		{% endif %}
-		    		<button type="button" class="btn btn-comment articleCommentPosition" id="nodeID_{{ node.id }}CommentButton">{{ node.commentCount }}</button>
-		    		<button type="button" class="btn btn-comment articleAddCommentPosition" id="nodeID_{{ node.id }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
+		    		<button type="button" class="btn btn-comment articleCommentPosition" id="{{ node.slug }}CommentButton">{{ node.commentCount }}</button>
+		    		<button type="button" class="btn btn-comment articleAddCommentPosition" id="{{ node.slug }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
 		    	</div>
 	    	{% elif node.isTypeTimelike and node.isPublished == True and not node.is_root_node %}
-	    		<div class='contentContainer nodeID_{{ node.id }}'> 	  
+	    		<div class='contentContainer {{ node.slug }}'> 	  
 		    		
 		    		{% if  node.isPublished == True  %}
 		    			 <div class="node{{ node.id }}video{{ node.content_object.id }} timelikeContainer" ></div>
 		    			
 		    		{% endif %}
-		    		<button type="button" class="btn btn-comment articleCommentPosition" id="nodeID_{{ node.id }}CommentButton">{{ node.commentCount }}</button>
-		    		<button type="button" class="btn btn-comment articleAddCommentPosition" id="nodeID_{{ node.id }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
+		    		<button type="button" class="btn btn-comment articleCommentPosition" id="{{ node.slug }}CommentButton">{{ node.commentCount }}</button>
+		    		<button type="button" class="btn btn-comment articleAddCommentPosition" id="{{ node.slug }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
 		    	</div>
 		    {% elif node.isTypeDataset and node.isPublished == True %}
-		    	<div class='contentContainer nodeID_{{ node.id }}'>
+		    	<div class='contentContainer {{ node.slug }}'>
 		    		{% if node.content_object.getGlobalDict.items %} 	  
 		    		<h3>Constants</h3>
 		    		<table class="table">
@@ -383,21 +387,38 @@ $(document).ready(function(){
 		    			</tbody>	
 		    		</table>
 		    		{% endif %}			
-		    		<button type="button" class="btn btn-comment articleCommentPosition" id="nodeID_{{ node.id }}CommentButton">{{ node.commentCount }}</button>
-		    		<button type="button" class="btn btn-comment articleAddCommentPosition" id="nodeID_{{ node.id }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
+		    		<button type="button" class="btn btn-comment articleCommentPosition" id="{{ node.slug }}CommentButton">{{ node.commentCount }}</button>
+		    		<button type="button" class="btn btn-comment articleAddCommentPosition" id="{{ node.slug }}CommentButtonAdd" title="Add a New Comment"><i class="icon-plus"></i></button>
 		    	</div>		
 	    	{% endif %}
 	    	 
 	
     {% endrecursetree %}
+<div class="pagination">
+    <span class="step-links">
+    	{% if current_article_list.has_previous or current_article_list.has_next %}
+        {% if current_article_list.has_previous %}
+            <a href="?page={{ current_article_list.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ current_article_list.number }} of {{ current_article_list.paginator.num_pages }}.
+        </span>
+
+        {% if current_article_list.has_next %}
+            <a href="?page={{ current_article_list.next_page_number }}">next</a>
+        {% endif %}
+        {% endif %}
+    </span>
+</div>	
     {% endblock %}
     {% block articleSideContent %}
     {% recursetree nodes %}
     		{% if node.mptt_level == 2 %}
-    			<div class="nodeID_{{ node.id }}CommentContainer">{% if not node.is_leaf_node %}{{ children }}{% endif %}	
+    			<div class="{{ node.slug }}CommentContainer">{% if not node.is_leaf_node %}{{ children }}{% endif %}	
     			</div>
      		{% elif node.isTypeNone and node.isComment == True and not node.is_root_node %}
-				<div class='commentContainer nodeID_{{ node.id }}'>
+				<div class='commentContainer {{ node.slug }}'>
 					<div class='commentMeta'>
 						<h5>{{node.pubDate|date}}</h5>
 						<h5>{{node.title}}</h5>
@@ -415,21 +436,21 @@ $(document).ready(function(){
 	        	</div>
 	        			
 	    	{% elif node.isTypeParagraph and node.isComment == True %}
-	    		<div class='contentContainerParagragh nodeID_{{ node.id }}'>       
+	    		<div class='contentContainerParagragh {{ node.slug }}'>       
 	        	   <p>
 	        	   {{ node.content_object.text }}</p>
 	        	</div>
 	    	{% elif node.isTypeImage and node.isComment == True %}	    		
-		    			<div class='contentContainerImage nodeID_{{ node.id }}'><img src={{ node.content_object.getImageURL }} alt="" /></div>
+		    			<div class='contentContainerImage {{ node.slug }}'><img src={{ node.content_object.getImageURL }} alt="" /></div>
 	    	{% elif node.isTypeTimelike and node.isComment == True%}
-	    		<div class='contentContainerTimelike nodeID_{{ node.id }}'> 	  
+	    		<div class='contentContainerTimelike {{ node.slug }}'> 	  
 		    		
 		    		
 		    			 <div class="node{{ node.id }}video{{ node.content_object.id }} timelikeContainer"   ></div>
 		    		
 		    	</div>
 		    	{% elif node.isTypeDataset and node.isComment == True %}
-		    	<div class='contentContainer nodeID_{{ node.id }}'> 	  
+		    	<div class='contentContainer {{ node.slug }}'> 	  
 		    		{% if node.content_object.getGlobalDict.items %}
 		    		<h3>Constants</h3>
 		    		<table class="table">
@@ -526,6 +547,5 @@ $(document).ready(function(){
 	</div>
 	
 </div>
-
 
 {% endblock %}
