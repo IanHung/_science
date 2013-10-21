@@ -767,15 +767,20 @@ def restrictedTagListSave(request, node, tagList):
     restrictedList = "_science",
     if not request.user.is_staff:
         tagList = filter(lambda x: not x.startswith(restrictedList), tagList)
+    else:
+        if any(item.startswith('restrictedList') for item in tagList) and node.isPublished:
+            staffList = User.objects.filter(is_staff = True)
+            for staff in staffList:
+                node.subscribedUser.add(staff)
     for tag in tagList:
         node.tag_set.add(tagSaveHelper(tag))
     node.save()  
         
 def getPositionForRoots():
-    if StructureNode.objects.filter(mptt_level=0).exists():
-        return StructureNode.objects.filter(mptt_level=0).order_by('-position')[0].position+1
-    else:
-        return 1
+#    if StructureNode.objects.filter(mptt_level=0).exists():
+#        return StructureNode.objects.filter(mptt_level=0).order_by('-position')[0].position+1
+#    else:
+    return 1
     
 def subjectURLqueryList(user,subject_url):
     tagList = hashTagParser(subject_url)

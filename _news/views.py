@@ -9,7 +9,7 @@ from django.db.models import Q
 from _article.forms import PublishForm
 
 def news(request, subject_url=None):
-    all_news_list = StructureNode.objects.filter(mptt_level=0, tag__name__startswith="_science")
+    all_news_list = StructureNode.objects.filter(mptt_level=0, tag__name__startswith="_science").order_by('-pubDate')
     if subject_url:
         all_news_list = subjectURLFilter(all_news_list, subject_url)
     paginator = Paginator(all_news_list, 5)

@@ -140,7 +140,7 @@ class StructureNode(MPTTModel):
         
     class MPTTMeta:
         level_attr = 'mptt_level'
-        order_insertion_by=['position']
+        order_insertion_by=['position', '-pubDate']
 
 class Rating(models.Model):
     structureNode = TreeOneToOneField(StructureNode)
@@ -283,7 +283,7 @@ from django.db.models import Q
 import operator 
 def get_queryset_descendants(nodes, include_self=True): 
     if not nodes: 
-        return StructureNode.tree.none() 
+        return StructureNode.none() 
     filters = [] 
     for n in nodes: 
         lft, rght = n.lft, n.rght 
@@ -292,7 +292,7 @@ def get_queryset_descendants(nodes, include_self=True):
             rght += 1 
         filters.append(Q(tree_id=n.tree_id, lft__gt=lft, rght__lt=rght)) 
     q = reduce(operator.or_, filters) 
-    return StructureNode.tree.filter(q)     
+    return StructureNode.objects.filter(q)     
 
 #splits on multiple white space or a hashtag    
 def hashTagParser(string):
