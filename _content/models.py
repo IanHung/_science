@@ -283,7 +283,7 @@ from django.db.models import Q
 import operator 
 def get_queryset_descendants(nodes, include_self=True): 
     if not nodes: 
-        return StructureNode.none() 
+        return StructureNode.objects.none() 
     filters = [] 
     for n in nodes: 
         lft, rght = n.lft, n.rght 
