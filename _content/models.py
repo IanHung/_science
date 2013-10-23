@@ -1,5 +1,5 @@
 from django.db import models
-from mptt.models import MPTTModel, TreeForeignKey, TreeOneToOneField
+from mptt.models import MPTTModel, TreeForeignKey, TreeOneToOneField, TreeManyToManyField
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -273,10 +273,15 @@ class Dataset(models.Model):
 #These are tags to organize nodes by subject type.    
 class Tag(models.Model):
     name = models.CharField(max_length=200)
-    nodes = models.ManyToManyField(StructureNode)
+    nodes = TreeManyToManyField(StructureNode)
     
     def __unicode__(self):
         return self.name
+
+#away for users to subscribe to other users    
+class UsersFollowingRelation(models.Model):
+    primaryUser = models.OneToOneField(User)
+    following = models.ManyToManyField(User, related_name = 'followers')
     
 #added filter to get descendants from queryset
 from django.db.models import Q 
