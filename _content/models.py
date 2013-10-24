@@ -172,6 +172,7 @@ class Image(models.Model):
     linkSource = models.URLField(max_length=200, blank=True, null=True)
     localSource = models.ImageField(upload_to='content/image', blank=True, null=True)
     originalStructureNode = TreeForeignKey(StructureNode, null=True, blank=True, related_name="original_image_content")
+    caption = models.TextField(blank=True, null=True)
     
     def __unicode__(self):
         if self.structureNode.order_by('pubDate').exists() and self.structureNode.order_by('pubDate')[0].title != "":
@@ -205,6 +206,7 @@ class Timelike(models.Model):
     linkSource = models.URLField(max_length=200, blank=True, null=True)
     localSource = models.FileField(upload_to='content/video', blank=True, null=True)
     originalStructureNode = TreeForeignKey(StructureNode, null=True, blank=True, related_name="original_timelike_content")
+    caption = models.TextField(blank=True, null=True)
     
     def __unicode__(self):
         if self.structureNode.order_by('pubDate').exists() and self.structureNode.order_by('pubDate')[0].title != "":
@@ -239,6 +241,7 @@ class Dataset(models.Model):
     data = JSONField(load_kwargs={'object_pairs_hook': collections.OrderedDict} ,blank=True, null=True)
     dataFile = models.FileField(upload_to='content/data', blank=True, null=True)
     originalStructureNode = TreeForeignKey(StructureNode, null=True, blank=True, related_name="original_dataset_content")
+    caption = models.TextField(blank=True, null=True)
     
     def getGlobalDict(self):
         decodedData = json.loads(json.dumps(self.data), object_pairs_hook=collections.OrderedDict)

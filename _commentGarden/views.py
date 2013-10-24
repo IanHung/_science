@@ -29,6 +29,7 @@ def submitComment(request):
             commentNode.isComment = True
             commentNode.position = getPositionForComments(request)
             commentNode.save()
+            commentNode.parent.subscribedUser.add(request.user)
             commentNode.subscribedUser.add(commentNode.parent.author)
             commentNode.subscribedUser.add(commentNode.author)
             commentNode.save()

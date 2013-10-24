@@ -2,7 +2,7 @@
 # Create your views here.
 
 from django.shortcuts import render
-from _content.models import StructureNode, get_queryset_descendants, Paragraph, hashTagParser, tagSaveHelper, Image, Timelike, Dataset, datasetFormatter
+from _content.models import StructureNode, get_queryset_descendants, Paragraph, hashTagParser, tagSaveHelper, Image, Timelike, Dataset, datasetFormatter, UsersFollowingRelation
 from _content.forms import ImageForm, ParagraphForm, TimelikeForm, StructureNodeTitleForm
 from _user.forms import ParagraphFormLabbook, ImageFormLabbook, TimelikeFormLabbook, DataFormLabbook, PublishForm, UpdateFormLabbook
 from django.contrib.auth.decorators import login_required
@@ -14,13 +14,23 @@ from django.utils.http import urlquote
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.forms import model_to_dict
+import operator
 
 @login_required
 def userDashboard(request):
                         
     top_article_list = get_queryset_descendants(StructureNode.objects.filter(subscribedUser=request.user)).filter(content_type=None).exclude(mptt_level=1).order_by('-pubDate')
-    
-    
+    try:
+        if request.user.usersfollowingrelation.following:
+            filters = []
+            for user in request.user.usersfollowingrelation.following:
+                filters.append(Q(author=user, isPublished=True, mptt_level=0))
+            q = reduce(operator.or_, filters)
+            user_article_list = StructureNode.objects.filter(q)
+            top_article_list = top_article_list | user_article_list
+        top_article_list = top_article_list.distinct()
+    except UsersFollowingRelation.DoesNotExist:
+        pass
     return render(request, '_user/dashboard.html', {'top_article_list':top_article_list})
 
 
