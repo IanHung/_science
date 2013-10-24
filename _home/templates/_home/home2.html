@@ -16,10 +16,7 @@
 			
 			<div class="articlePreviewContainer">
 				<h2><a href={% url "article" StructureNode.url %}>{{ StructureNode.title }}</a></h2>
-				<p>{{ StructureNode.pubDate|date }}</p>
-				{% if StructureNode.author %}
-				<p>{{ StructureNode.author.username }}</p>
-				{% endif %}
+				<p><b>By:</b> <a class="authorAnchor" href={% url 'userLabbookName' StructureNode.author.username %}>{{ StructureNode.author.username }}</a> on {{ StructureNode.pubDate|date }}</p>
 				{% if StructureNode.getNearestAbstractImage %}<div class="previewThumbnail"><div class="contentContainerImage"><img src={{ StructureNode.getNearestAbstractImage.getImageURL }} alt="" /></div></div>
 				<div class="previewParagraphWImage">{{ StructureNode.getNearestAbstractParagraph }}</div>
 				{% else %}<div class="previewParagraph">{{ StructureNode.getNearestAbstractParagraph }}</div>{% endif %}

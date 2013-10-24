@@ -19,7 +19,7 @@ import operator
 @login_required
 def userDashboard(request):
                         
-    top_article_list = get_queryset_descendants(StructureNode.objects.filter(subscribedUser=request.user)).filter(content_type=None).exclude(mptt_level=1).order_by('-pubDate')
+    top_article_list = get_queryset_descendants(StructureNode.objects.filter(subscribedUser=request.user)).filter(content_type=None).exclude(parent__isnull=False,parent__content_type=None).order_by('-pubDate')
     try:
         if request.user.usersfollowingrelation.following:
             filters = []

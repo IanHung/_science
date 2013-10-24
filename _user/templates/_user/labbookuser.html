@@ -32,7 +32,7 @@ $(document).ready(function () {
 			<div class="postMeta">
 				{% ifchanged StructureNode.pubDate.date %} <h5>{{ StructureNode.pubDate|date }}</h5> {% endifchanged %}
 				<h5>{{ StructureNode.pubDate|time }}</h5>
-				<p>{{ StructureNode.title }}</p>{% if StructureNode.tag_set.all %}<p>{% for tag in StructureNode.tag_set.all %}<a href={% url 'userLabbook' userName|tag.name %}>#{{ tag.name }} </a>{% endfor %}</p>{% endif %}
+				<p>{{ StructureNode.title }}</p>{% if StructureNode.tag_set.all %}<p>{% for tag in StructureNode.tag_set.all %}<a href={% url 'userLabbookNameTag' userName tag.name|urlencode %}>#{{ tag.name }} </a>{% endfor %}</p>{% endif %}
 			</div>
 			
 			<div class="postContent">

@@ -18,7 +18,7 @@
 				<h2><a href={% url "article" StructureNode.url %}>{{ StructureNode.title }}</a></h2>
 				<p>{{ StructureNode.pubDate|date }}</p>
 				{% if StructureNode.author %}
-				<p>{{ StructureNode.author.username }}</p>
+				<p><a href={% url 'userLabbookName' StructureNode.author.username %}></a>{{ StructureNode.author.username }}</p>
 				{% endif %}
 				{% if StructureNode.getNearestAbstractImage %}<div class="previewThumbnail"><div class="contentContainerImage"><img src={{ StructureNode.getNearestAbstractImage.getImageURL }} alt="" /></div></div>
 				<div class="previewParagraphWImage">{{ StructureNode.getNearestAbstractParagraph }}</div>

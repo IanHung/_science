@@ -10,6 +10,10 @@ $(document).ready(function(){
 		$(".element" + tempIndex).css("background-image", "url({{ StructureNode.getNearestAbstractImage.getImageURL }})");
 		{% endif %}
 	{% endfor %}
+	
+	$(".authorAnchor").click(function(e){
+		e.stopPropagation();
+	});
 });
 </script>
 {% endblock %}
@@ -23,9 +27,9 @@ $(document).ready(function(){
 			<div class="heroUnitLeft">
 				<div class="heroUnitElement1 element0">
 				
-					<div class="heroUnitElement1Caption" onclick="window.location={% url 'article' top_article_list.0.url %};" >
+					<div class="heroUnitElement1Caption" onclick="window.location='{% url 'article' top_article_list.0.url %}';" >
 						<h3>{{ top_article_list.0.title }}</h3>
-						<p><b>By:</b> {{ top_article_list.0.author.username }} on {{ top_article_list.0.pubDate|date }}</p>
+						{% if top_article_list.0.author.username %}<p><b>By:</b> <a class="authorAnchor" href={% url 'userLabbookName' top_article_list.0.author.username %}>{{ top_article_list.0.author.username }}</a> on {{ top_article_list.0.pubDate|date }}</p>{% endif %}
 					</div>
 					<div class="heroUnitElement1Filter" onclick="window.location='{% url 'article' top_article_list.0.url %}';">
 					</div>
@@ -42,7 +46,7 @@ $(document).ready(function(){
 					
 						<div class="heroUnitElement1Caption smallHeight" onclick="window.location='{% url 'article' top_article_list.1.url %}';">
 							<h3>{{ top_article_list.1.title }}</h3>
-							<p><b>By:</b> {{ top_article_list.1.author.username }} on {{ top_article_list.1.pubDate|date }}</p>
+							{% if top_article_list.1.author.username %}<p><b>By:</b> <a class="authorAnchor" href={% url 'userLabbookName' top_article_list.1.author.username %}>{{ top_article_list.1.author.username }}</a> on {{ top_article_list.1.pubDate|date }}</p>{% endif %}
 						</div>
 						<div class="heroUnitElement1Filter" onclick="window.location='{% url 'article' top_article_list.1.url %}';">
 						</div>
@@ -55,7 +59,7 @@ $(document).ready(function(){
 					
 						<div class="heroUnitElement1Caption smallHeight" onclick="window.location='{% url 'article' top_article_list.2.url %}';">
 							<h3>{{ top_article_list.2.title }}</h3>
-							<p><b>By:</b> {{ top_article_list.2.author.username }} on {{ top_article_list.2.pubDate|date }}</p>
+							{% if top_article_list.2.author.username %}<p><b>By:</b> <a class="authorAnchor" href={% url 'userLabbookName' top_article_list.2.author.username %}>{{ top_article_list.2.author.username }}</a> on {{ top_article_list.2.pubDate|date }}</p>{% endif %}
 						</div>
 						<div class="heroUnitElement1Filter" onclick="window.location='{% url 'article' top_article_list.2.url %}';">
 						</div>
@@ -71,7 +75,7 @@ $(document).ready(function(){
 					
 						<div class="heroUnitElement1Caption smallHeight" onclick="window.location='{% url 'article' top_article_list.3.url %}';">
 							<h3>{{ top_article_list.3.title }}</h3>
-							<p><b>By:</b> {{ top_article_list.3.author.username }} on {{ top_article_list.3.pubDate|date }}</p>
+							{% if top_article_list.3.author.username %}<p><b>By:</b> <a class="authorAnchor" href={% url 'userLabbookName' top_article_list.3.author.username %}>{{ top_article_list.3.author.username }}</a> on {{ top_article_list.3.pubDate|date }}</p>{% endif %}
 						</div>
 						<div class="heroUnitElement1Filter" onclick="window.location='{% url 'article' top_article_list.3.url %}';">
 						</div>
@@ -84,7 +88,7 @@ $(document).ready(function(){
 					
 						<div class="heroUnitElement1Caption smallHeight" onclick="window.location='{% url 'article' top_article_list.4.url %}';">
 							<h3>{{ top_article_list.4.title }}</h3>
-							<p><b>By:</b> {{ top_article_list.4.author.username }} on {{ top_article_list.4.pubDate|date }}</p>
+							{% if top_article_list.3.author.username %}<p><b>By:</b> <a class="authorAnchor" href={% url 'userLabbookName' top_article_list.4.author.username %}>{{ top_article_list.4.author.username }}</a> on {{ top_article_list.4.pubDate|date }}</p>{% endif %}
 						</div>
 						<div class="heroUnitElement1Filter" onclick="window.location='{% url 'article' top_article_list.4.url %}';">
 						</div>
@@ -107,7 +111,7 @@ $(document).ready(function(){
 		{% if forloop.counter >= 6 %}
 			<div class="articlePreviewContainer">
 			<h2><a href={% url "article" StructureNode.url %}>{{ StructureNode.title }}</a></h2>
-			<p>{{ StructureNode.pubDate|date }}</p>
+			<p><b>By:</b> <a class="authorAnchor" href={% url 'userLabbookName' StructureNode.author.username %}>{{ StructureNode.author.username }}</a> on {{ StructureNode.pubDate|date }}</p>
 			
 				{% if StructureNode.getNearestAbstractImage %}<div class="previewThumbnail"><img src={{ StructureNode.getNearestAbstractImage.getImageURL }} class="img-rounded" alt="" /></div>
 				<div class="previewParagraphWImage">{{ StructureNode.getNearestAbstractParagraph }}</div>
