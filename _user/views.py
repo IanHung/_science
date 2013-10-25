@@ -530,6 +530,18 @@ def userSearchForm(request):
         else:
             return HttpResponseRedirect(reverse('userLabbook'))
 
+@login_required
+def userSearchNameTagForm(request):
+    if (request.method == 'POST'):
+        if request.POST.get('search', False):
+            tagList = hashTagParser(request.POST['search'].replace("#", "  ").strip())
+            subject_url = ""
+            for tag in tagList:
+                subject_url = subject_url + "#" + urlquote(tag)
+            argsSearchForm=subject_url.replace("#", "  ").strip()
+            return HttpResponseRedirect(reverse('userLabbookNameTag', args=[request.POST['user'], argsSearchForm]))
+        else:
+            return HttpResponseRedirect(reverse('userLabbookName'))    
 
 @login_required
 def userLabbookTextForm(request, subject_url=None):
