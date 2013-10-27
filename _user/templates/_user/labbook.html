@@ -693,4 +693,12 @@ $(document).ready(function () {
 {% endblock %}
 
 
-
+{% block sideContent %}{{ block.super }}<div class="userSideMenu">
+	<ul class="nav nav-pills nav-stacked"> <li><form id="id_userSeachSideMenu" class="form-inline" method="post" action={% url "userSearchForm" %}>
+			{% csrf_token %}
+			<div class="input-group">
+			<input type="text" class="form-control userSearchInput" name="search" placeholder="Search">
+			
+			<span class="input-group-btn"><input id="searchFormButton" type="submit" class="btn btn-primary"></span>
+			</form></li>	</ul>	
+</div>{% endblock %}
