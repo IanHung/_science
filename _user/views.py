@@ -15,11 +15,14 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.forms import model_to_dict
 import operator
+from _news.views import subjectURLFilter
 
 @login_required
-def userDashboard(request):
-                        
-    top_article_list = get_queryset_descendants(StructureNode.objects.filter(subscribedUser=request.user)).filter(content_type=None).exclude(parent__isnull=False,parent__content_type=None).order_by('-pubDate')
+def userDashboard(request, subject_url=None):
+    subscribed_thread_list = StructureNode.objects.filter(subscribedUser=request.user)
+    if (subject_url):
+        subscribed_thread_list = subjectURLFilter(subscribed_thread_list, subject_url)
+    top_article_list = get_queryset_descendants(subscribed_thread_list).filter(content_type=None).exclude(parent__isnull=False,parent__content_type=None).order_by('-pubDate')
     try:
         if request.user.usersfollowingrelation.following:
             filters = []
@@ -27,6 +30,8 @@ def userDashboard(request):
                 filters.append(Q(author=user, isPublished=True, mptt_level=0))
             q = reduce(operator.or_, filters)
             user_article_list = StructureNode.objects.filter(q)
+            if (subject_url):
+                user_article_list = subjectURLFilter(user_article_list, subject_url)
             top_article_list = top_article_list | user_article_list
         top_article_list = top_article_list.distinct()
     except UsersFollowingRelation.DoesNotExist:
@@ -541,7 +546,20 @@ def userSearchNameTagForm(request):
             argsSearchForm=subject_url.replace("#", "  ").strip()
             return HttpResponseRedirect(reverse('userLabbookNameTag', args=[request.POST['user'], argsSearchForm]))
         else:
-            return HttpResponseRedirect(reverse('userLabbookName'))    
+            return HttpResponseRedirect(reverse('userLabbookName'))
+        
+@login_required
+def userDashboardTagForm(request):
+    if (request.method == 'POST'):
+        if request.POST.get('search', False):
+            tagList = hashTagParser(request.POST['search'].replace("#", "  ").strip())
+            subject_url = ""
+            for tag in tagList:
+                subject_url = subject_url + "#" + urlquote(tag)
+            argsSearchForm=subject_url.replace("#", "  ").strip()
+            return HttpResponseRedirect(reverse('userDashboardTag', args=[argsSearchForm]))
+        else:
+            return HttpResponseRedirect(reverse('userDashboard'))       
 
 @login_required
 def userLabbookTextForm(request, subject_url=None):

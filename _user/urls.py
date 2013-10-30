@@ -9,6 +9,8 @@ from _user import views
 
 urlpatterns = patterns('',
                        url(r'^$', views.userDashboard, name='userDashboard'),
+                       url(r'^dashboard/tag/(?P<subject_url>[^/]+)/$', views.userDashboard, name='userDashboardTag'),
+                       url(r'^search/dashboard/', views.userDashboardTagForm, name='userDashboardTagForm'),
                        url(r'^comment/$', views.userComment, name='userComment'),
                        url(r'^comment/edit/(?P<comment_url>.*)/$', views.userCommentEdit, name='userCommentEdit'),
                        url(r'^comment/submit/edit/$', views.userCommentEditSubmit, name='userCommentEditSubmit'),

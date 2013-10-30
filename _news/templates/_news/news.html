@@ -302,10 +302,10 @@ $(document).ready(function(){
 						
 						{% if node.author %}
 						{% ifchanged node.parent %}
-						<h5><a href={% url 'userLabbookName' {{ node.author.username}} %}>{{ node.author.username}}</a></h5>
+						<h5><a href={% url 'userLabbookName'  node.author.username %}>{{ node.author.username}}</a></h5>
 						{% else %}
 							{% ifchanged node.author %}
-							<h5><a href={% url 'userLabbookName' {{ node.author.username}} %}>{{ node.author.username}}</a></h5>
+							<h5><a href={% url 'userLabbookName'  node.author.username %}>{{ node.author.username}}</a></h5>
 							{% endifchanged %}
 						{% endifchanged %}	
 						{% endif %}
@@ -423,7 +423,7 @@ $(document).ready(function(){
 						<h5>{{node.pubDate|date}}</h5>
 						<h5>{{node.title}}</h5>
 						{% if node.author %}
-						<h5><a href={% url 'userLabbookName' {{ node.author.username}} %}>{{ node.author.username}}</a></h5>
+						<h5><a href={% url 'userLabbookName'  node.author.username %}>{{ node.author.username}}</a></h5>
 						{% endif %}
 					</div>
 					
