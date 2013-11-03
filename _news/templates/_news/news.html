@@ -23,6 +23,7 @@ $(document).ready(function(){
 		 			});
 	$(".nodeID_{{ node.id }}CommentContainer").hide();	 			
 	$("#nodeID_{{ node.id }}CommentButton").click(function(){
+						$(".articleSideContainer").height($(".articleSideContainer").height()-$(".showing").height());
 		 				if($(".nodeID_{{ node.id }}CommentContainer").hasClass('showing'))
 		 				{
 		 					$(".nodeID_{{ node.id }}CommentContainer").hide().removeClass('showing');
@@ -34,14 +35,26 @@ $(document).ready(function(){
 		 					$(".nodeID_{{ node.id }}CommentContainer").show().addClass("showing");
 		 					sideHeight = $(".nodeID_{{ node.id }}CommentContainer").height() + $(".nodeID_{{ node.id }}CommentContainer").position().top;
 		 					$(".articleSideContainer").height(sideHeight);
+		 					if($(".class_sectionParent").val() != {{ node.id }}){$(".publishFormContainer").hide();}
+							else{ if($(".publishFormContainer").is(":hidden")){} else{ $(".articleSideContainer").height($(".articleSideContainer").height()+$(".publishFormContainer").height()+10); } }
+									
+							$(".class_sectionParent").val({{ node.id }});
 		 				}
 		 			});
 	$("#nodeID_{{ node.id }}CommentButtonAdd").click(function(){
-		if ($(".publishFormContainer").position().top == position{{ node.id }}){
+		if ($(".class_sectionParent").val() == {{ node.id }}){
 			$(".publishFormContainer").toggle();
+			if($(".publishFormContainer").is(":hidden")){
+			$(".articleSideContainer").height($(".articleSideContainer").height()-$(".publishFormContainer").height()-10);
+			}
+			else{
+				$(".articleSideContainer").height($(".articleSideContainer").height()+$(".publishFormContainer").height()+10);
+			}
 		}
 		else {
+			$(".showing").hide().removeClass("showing");
 			$(".publishFormContainer").show();
+			$(".articleSideContainer").height(position{{ node.id }}+$(".publishFormContainer").height()+10);
 		}
 		$(".class_sectionParent").val({{ node.id }});
 		$(".publishFormContainer").css({
@@ -274,6 +287,7 @@ $(document).ready(function(){
 	
 	$("#publishForm").on('click','#publishFormClose', function(){
 		$(".publishFormContainer").hide();
+		$(".articleSideContainer").height($(".articleSideContainer").height()-$(".publishFormContainer").height()-10);
 	});
 	//Hides the comment menu when button is clicked
 	{% endif %}
