@@ -388,7 +388,7 @@ $(document).ready(function () {
 		$("#paragraphPreviewButton").click(function(){
 			$("#paragraphMathPreview").html($("#id_textFormText").val());
 			$("#paragraphMathPreviewContainer").show();
-			MathJax.Hub.Queue(["Typeset",MathJax.Hub,paragraphMathPreview]);
+			MathJax.Hub.Queue(["Typeset",MathJax.Hub,"paragraphMathPreview"]);
 		});
 		$("#hideParagraphPreviewButton").click(function(){
 			$("#paragraphMathPreviewContainer").hide();
