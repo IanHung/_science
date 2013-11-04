@@ -383,7 +383,16 @@ $(document).ready(function () {
 				}
 		});
 		
-				
+		//This is the preview button for paragraphs
+		$("#paragraphMathPreviewContainer").hide();
+		$("#paragraphPreviewButton").click(function(){
+			$("#paragraphMathPreview").html($("#id_textFormText").val());
+			$("#paragraphMathPreviewContainer").show();
+			MathJax.Hub.Queue(["Typeset",MathJax.Hub,paragraphMathPreview]);
+		});
+		$("#hideParagraphPreviewButton").click(function(){
+			$("#paragraphMathPreviewContainer").hide();
+		});		
 	});
 </script>
 {% endblock %}
@@ -434,7 +443,14 @@ $(document).ready(function () {
 							<input type="hidden" name="formType" value="textForm">
 							<input type="hidden" name="isLabnote" value=true>
 						</div>
+						<div class="contentContainer" id="paragraphMathPreviewContainer">
+							<h4>Preview:</h4>
+							<br>
+							<p id="paragraphMathPreview"></p>
+						</div>
 						<button type="submit" class="btn btn-primary">Submit</button>
+						<button type="button" class="btn btn-primary" id="paragraphPreviewButton" title="Show/Update">Preview</button>
+						<button type="button" class="btn btn-primary" id="hideParagraphPreviewButton">Hide Preview</button>
 						<button id="textFormClose" class="btn btn-default pull-right">Close</button>
 					</form>
 					
