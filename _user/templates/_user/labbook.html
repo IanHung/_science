@@ -385,13 +385,16 @@ $(document).ready(function () {
 		
 		//This is the preview button for paragraphs
 		$("#paragraphMathPreviewContainer").hide();
+		$("#hideParagraphPreviewButton").hide();
 		$("#paragraphPreviewButton").click(function(){
 			$("#paragraphMathPreview").html($("#id_textFormText").val());
 			$("#paragraphMathPreviewContainer").show();
 			MathJax.Hub.Queue(["Typeset",MathJax.Hub,"paragraphMathPreview"]);
+			$("#hideParagraphPreviewButton").show();
 		});
 		$("#hideParagraphPreviewButton").click(function(){
 			$("#paragraphMathPreviewContainer").hide();
+			$("#hideParagraphPreviewButton").hide();
 		});		
 	});
 </script>
