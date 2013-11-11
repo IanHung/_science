@@ -160,6 +160,8 @@ class Paragraph(models.Model):
     structureNode = generic.GenericRelation(StructureNode)
     text = models.TextField()
     originalStructureNode = TreeForeignKey(StructureNode, null=True, blank=True, related_name="original_paragraph_content")
+    isCode = models.BooleanField()
+    
     
     def __unicode__(self):
         if self.structureNode.order_by('pubDate').exists() and self.structureNode.order_by('pubDate')[0].title != "":
