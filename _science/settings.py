@@ -203,6 +203,7 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     
 )
 
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 if not DEBUG:
     from prod import *
